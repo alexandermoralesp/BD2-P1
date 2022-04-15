@@ -11,69 +11,52 @@ namespace Registros
     struct Cereal;
 }
 
+const int max_name_len = 50;
+
 struct Registros::Cereal
 {
-    string id; // name
+    Cereal() = default;
+    Cereal(string key);
+    char id[max_name_len]; // name
     char mfr, type;
     int calories, protein, fat, sodium, fiber, carbo, sugars, potass, vitamins, shelf;
     float weight, cups, rating;
     void readCSVLine(string st);
+    bool operator==(Registros::Cereal c);
     bool operator<(Registros::Cereal c);
+    bool operator>(Registros::Cereal c);
 };
 
-istream& operator>>(istream& is, Registros::Cereal &c){
-    int len;
-    is.read((char*) &len, sizeof(int));
-    char* buffer = new char[len];
-    is.read(buffer, len);
-    c.id = buffer;
-    is.read((char *)&c.mfr, sizeof(char));
-    is.read((char *)&c.type, sizeof(char));
-    is.read((char *)&c.calories, sizeof(int));
-    is.read((char *)&c.protein, sizeof(int));
-    is.read((char *)&c.fat, sizeof(int));
-    is.read((char *)&c.sodium, sizeof(int));
-    is.read((char *)&c.fiber, sizeof(int));
-    is.read((char *)&c.carbo, sizeof(int));
-    is.read((char *)&c.sugars, sizeof(int));
-    is.read((char *)&c.potass, sizeof(int));
-    is.read((char *)&c.vitamins, sizeof(int));
-    is.read((char *)&c.shelf, sizeof(int));
-    is.read((char *)&c.weight, sizeof(float));
-    is.read((char *)&c.cups, sizeof(float));
-    is.read((char *)&c.rating, sizeof(float));
 
-    delete[] buffer;
+
+Registros::Cereal::Cereal(string key)
+{
+    int length = key.copy(id, max_name_len);
+    id[length] = '\0';
+}
+
+istream& operator>>(istream& is, Registros::Cereal &c){
+    is.read((char*) &c, sizeof(Registros::Cereal));
     return is;
 }
 
-ostream &operator<<(ostream &os, Registros::Cereal c)
-{
-    int len = c.id.size();
-    os.write((char *)&len, sizeof(int));
-    os.write(c.id.c_str(), c.id.size());
-    os.write((char *)&c.mfr, sizeof(char));
-    os.write((char *)&c.type, sizeof(char));
-    os.write((char *)&c.calories, sizeof(int));
-    os.write((char *)&c.protein, sizeof(int));
-    os.write((char *)&c.fat, sizeof(int));
-    os.write((char *)&c.sodium, sizeof(int));
-    os.write((char *)&c.fiber, sizeof(int));
-    os.write((char *)&c.carbo, sizeof(int));
-    os.write((char *)&c.sugars, sizeof(int));
-    os.write((char *)&c.potass, sizeof(int));
-    os.write((char *)&c.vitamins, sizeof(int));
-    os.write((char *)&c.shelf, sizeof(int));
-    os.write((char *)&c.weight, sizeof(float));
-    os.write((char *)&c.cups, sizeof(float));
-    os.write((char *)&c.rating, sizeof(float));
-
+ostream& operator<<(ostream& os, Registros::Cereal c){
+    os.write((char*) &c, sizeof(Registros::Cereal));
     return os;
+}
+
+bool Registros::Cereal::operator>(Registros::Cereal c){
+    return !(string(id)==string(c.id) || string(id)<string(c.id));
+}
+
+bool Registros::Cereal::operator==(Registros::Cereal c){
+    return string(id)==string(c.id);
 }
 
 bool Registros::Cereal::operator<(Registros::Cereal c)
 {
-    int minlen = (id.size() < c.id.size() ? id.size() : c.id.size());
+    int thislen = string(id).size(), clen = string(c.id).size();
+    int minlen = (thislen <  clen? thislen : clen);
     for (int i = 0; i < minlen; i++)
     {
         if (id[i] < c.id[i])
@@ -82,15 +65,12 @@ bool Registros::Cereal::operator<(Registros::Cereal c)
             return false;
     }
 
-    return id.size() < c.id.size();
+    return thislen < clen;
 }
 
 void Registros::Cereal::readCSVLine(string st)
 {
-    char *stName = new char[st.size()];
-    sscanf(st.c_str(), "%[^,],%c,%c,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%f,%f,%f", stName, &mfr, &type, &calories, &protein, &fat, &sodium, &fiber, &carbo, &sugars, &potass, &vitamins, &shelf, &weight, &cups, &rating);
-    id = stName;
-    delete[] stName;
+    sscanf(st.c_str(), "%[^,],%c,%c,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%f,%f,%f", id, &mfr, &type, &calories, &protein, &fat, &sodium, &fiber, &carbo, &sugars, &potass, &vitamins, &shelf, &weight, &cups, &rating);
 }
 
 #endif

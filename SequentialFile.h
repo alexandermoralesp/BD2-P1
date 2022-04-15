@@ -24,12 +24,44 @@ private:
 public:
     SequentialFile(string _base_path);
     void add(T reg);
+    template<typename Key_t>
+    T search(Key_t key);
 };
 
-template<typename T, typename Key_t>
-T search(Key_t key){
-    
-    return ;
+template<typename T>
+template<typename Key_t>
+T SequentialFile<T>::search(Key_t key){
+    ifstream file(base_path+BinSuffix, ios::in|ios::binary);
+
+    file.seekg(0,ios::end);
+    int l = 0;
+    int r = (file.tellg()-sizeof(T)-sizeof(int))/(sizeof(T)+sizeof(int));
+
+    T result, objective(key);
+
+    while(l<r){
+        int m = (l+r)/2;
+        file.seekg(m*(sizeof(T)+sizeof(int)), ios::beg);
+        file>>result;
+        if(objective>result)
+            l = m;
+        else if(objective<result)
+            r = m;
+        else 
+            return result;
+    }
+    file.close();
+
+    file.open(base_path+AuxSuffix, ios::in|ios::binary);
+
+    while (file>>result)
+    {
+        if(result == objective) return result;
+        file.ignore(sizeof(int));
+    }
+
+    file.close();
+    return T();
 }
 
 template <typename T>
