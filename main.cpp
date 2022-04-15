@@ -7,5 +7,7 @@ int main(){
 
     auto reg = sf.search<string>("Mueslix Crispy Blend");
 
+    auto regs = sf.rangeSearch<string>("Mueslix Crispy Blend", "Smacks");
+
     return 0;
 }
