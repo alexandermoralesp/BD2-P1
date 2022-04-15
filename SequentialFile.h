@@ -30,6 +30,7 @@ ostream &operator<<(ostream &os, NextLabel n)
     os.write((char *)&n, sizeof(NextLabel));
     return os;
 }
+
 istream &operator>>(istream &is, NextLabel &n)
 {
     is.read((char *)&n, sizeof(NextLabel));
@@ -54,6 +55,7 @@ public:
     template <typename Key_t>
     T search(Key_t key);
 };
+
 template <typename T>
 template <typename Key_t>
 vector<T> SequentialFile<T>::rangeSearch(Key_t begin_key, Key_t end_key)
@@ -75,22 +77,22 @@ vector<T> SequentialFile<T>::rangeSearch(Key_t begin_key, Key_t end_key)
         int l = 0;
         fileData.seekg(0, ios::end);
         int r = (fileData.tellg() - row_sizeof - sizeof(NextLabel)) / row_sizeof;
-        while (l < r)
+        while (l <= r)
         {
             int m = (l + r) / 2;
             fileData.seekg(sizeof(NextLabel) + m * row_sizeof, ios::beg);
             fileData >> row_group[i];
             if (key_group[i] > row_group[i])
-                l = m;
+                l = m + 1;
             else if (key_group[i] < row_group[i])
-                r = m;
+                r = m - 1;
             else
             {
                 fileData >> label_group[i];
                 break;
             }
         }
-        if (l == r)
+        if (key_group[i] != row_group[i])
         {
             fileAux.seekg(0, ios::beg);
 
@@ -102,7 +104,7 @@ vector<T> SequentialFile<T>::rangeSearch(Key_t begin_key, Key_t end_key)
                 }
             }
 
-            if (!(row_group[i] == key_group[i]))
+            if (row_group[i] != key_group[i])
                 i ? throw("Llave de cierre no encontrada") : throw("Llave de inicio no encontrada");
         }
     }
@@ -113,7 +115,7 @@ vector<T> SequentialFile<T>::rangeSearch(Key_t begin_key, Key_t end_key)
     {
         if (label_group[0].nextRowFile == 'd')
         {
-            fileData.seekg((label_group[0].nextRow - 1) * row_sizeof + sizeof(NextLabel),ios::beg);
+            fileData.seekg((label_group[0].nextRow - 1) * row_sizeof + sizeof(NextLabel), ios::beg);
             fileData >> row_group[0] >> label_group[0];
         }
         else
@@ -142,17 +144,20 @@ T SequentialFile<T>::search(Key_t key)
 
     T result, objective(key);
 
-    while (l < r)
+    while (l <= r)
     {
         int m = (l + r) / 2;
         file.seekg(sizeof(NextLabel) + m * row_sizeof, ios::beg);
         file >> result;
         if (objective > result)
-            l = m;
+            l = m + 1;
         else if (objective < result)
-            r = m;
+            r = m - 1;
         else
+        {
+            file.close();
             return result;
+        }
     }
     file.close();
 
@@ -173,6 +178,13 @@ T SequentialFile<T>::search(Key_t key)
 template <typename T>
 void SequentialFile<T>::add(T reg)
 {
+    ifstream fileData(base_path + BinSuffix, ios::in | ios::binary);
+    ifstream fileAux(base_path + AuxSuffix, ios::in | ios::binary);
+
+    
+
+    fileData.close();
+    fileAux.close();
 }
 
 template <typename T>

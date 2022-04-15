@@ -23,6 +23,7 @@ struct Registros::Cereal
     float weight, cups, rating;
     void readCSVLine(string st);
     bool operator==(Registros::Cereal c);
+    bool operator!=(Registros::Cereal c);
     bool operator<(Registros::Cereal c);
     bool operator>(Registros::Cereal c);
 };
@@ -51,6 +52,10 @@ bool Registros::Cereal::operator>(Registros::Cereal c){
 
 bool Registros::Cereal::operator==(Registros::Cereal c){
     return string(id)==string(c.id);
+}
+
+bool Registros::Cereal::operator!=(Registros::Cereal c){
+    return !(string(id)==string(c.id));
 }
 
 bool Registros::Cereal::operator<(Registros::Cereal c)
