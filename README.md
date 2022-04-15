@@ -1,2 +1,9 @@
-# BD2-P1
-Primer proyecto de curso de Base de Datos II
+# Proyecto 1
+
+## Integrantes
+
+- Morales Panitz, Alexander 
+- Ugarte Quispe, Grover
+- Gutierrez Luis
+
+## Introducción
