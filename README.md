@@ -5,6 +5,7 @@
 - Morales Panitz, Alexander 
 - Ugarte Quispe, Grover
 - Gutierrez Luis
+
 | Apellidos y Nombres       | Código de alumno | % Participación |
 |---------------------------|------------------|-----------------|
 | Morales Panitz, Alexander | 202020195        | 100%            |
