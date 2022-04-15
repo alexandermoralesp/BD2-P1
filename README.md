@@ -7,3 +7,9 @@
 - Gutierrez Luis
 
 ## Introducción
+
+## Fundamentación de técnicas de organización de archivos
+
+## Resultados experimentales
+
+## Pruebas de uso
