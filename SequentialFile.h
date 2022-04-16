@@ -7,6 +7,7 @@
 #include <algorithm>
 #include "Registros.h"
 #include <ctgmath>
+#include <queue>
 
 using namespace std;
 
@@ -67,15 +68,16 @@ void SequentialFile<T>::remove(Key_t key)
 
     fstream file(base_path + BinSuffix, ios::in | ios::binary);
     file.seekg(0, ios::end);
-    int l = 0;
+    int l = 0, m;
     int r = (file.tellg() - row_sizeof - sizeof(NextLabel)) / row_sizeof;
 
     T row_reg;
     const T key_reg(key);
     NextLabel row_label;
+    bool row_in_aux = false;
     while (l <= r)
     {
-        int m = (l + r) / 2;
+        m = (l + r) / 2;
         file.seekg(sizeof(NextLabel) + m * row_sizeof, ios::beg);
         file >> row_reg;
         if (key_reg > row_reg)
@@ -89,14 +91,20 @@ void SequentialFile<T>::remove(Key_t key)
         }
     }
 
-    if (key_reg != row_reg)
+    if (l > r)
     {
+        m = 0;
+        row_in_aux = true;
         while (file >> row_reg)
         {
             if (key_reg == row_reg)
+            {
                 file >> row_label;
+                break;
+            }
             else
                 file.ignore(NextLabel);
+            m++;
         }
         if (key_reg != row_reg)
         {
@@ -112,6 +120,50 @@ void SequentialFile<T>::remove(Key_t key)
 template <typename T>
 void SequentialFile<T>::reorganize()
 {
+    fstream fileData(base_path + BinSuffix, ios::out | ios::in | ios::binary);
+    ifstream fileAux(base_path + AuxSuffix, ios::in | ios::binary);
+    fileData.seekg(0, ios::end);
+    int total_rows = (int(fileData.tellg()) - sizeof(NextLabel)) / row_sizeof + K_max_aux;
+
+    fileData.seekg(0, ios::beg);
+    queue<T> save_regs;
+    T write_reg, save_reg;
+    NextLabel write_label, pass_label;
+
+    fileData >> pass_label;
+    for (write_label = {1, 'd'}; pass_label.nextRow == -1; write_label.nextRow++)
+    {
+        fileData << write_label;
+        if (pass_label.nextRowFile == 'd')
+        {
+            fileAux.seekg((pass_label.nextRow - 1) * row_sizeof + sizeof(NextLabel), ios::beg);
+            if (save_regs.size() > 0)
+            {
+                fileData >> save_reg >> pass_label;
+                save_regs.push(save_reg);
+                fileData.seekg(-1 * row_sizeof, ios::cur);
+                fileData << save_regs.top();
+            }
+            else
+            {
+                fileData.ignore(sizeof(T));
+            }
+        }
+        else if (pass_label.nextRowFile == 'a')
+        {
+            fileAux.seekg((pass_label.nextRow - 1) * row_sizeof, ios::beg);
+            fileAux >> write_reg >> pass_label;
+            fileData >> save_reg;
+            save_regs.push(save_reg);
+            fileData.seekg(-1 * sizeof(T), ios::cur);
+            fileData << write_reg;
+        }
+    }
+
+    fileData << pass_label;
+
+    fileAux.close();
+    fileData.close();
 }
 
 template <typename T>
