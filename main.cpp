@@ -6,7 +6,7 @@ int main(){
 
     SequentialFile<Registros::Cereal> sf("cereal");
 
-    /* Registros::Cereal radd{"Chisitos",'G','C',110,6,2,290,2,17,1,105,25,1,1,1.25,50.764999};
+    /* Registros::Cereal radd{"Consorcio",'G','C',110,6,2,290,2,17,1,105,25,1,1,1.25,50.764999};
     sf.add(radd);
 
     vector<Registros::Cereal> v1;

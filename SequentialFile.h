@@ -64,20 +64,26 @@ void SequentialFile<T>::reorganize()
 }
 
 template <typename T>
-void SequentialFile<T>::loadAll(vector<T> &regs, vector<NextLabel> &labs){
+void SequentialFile<T>::loadAll(vector<T> &regs, vector<NextLabel> &labs)
+{
     ifstream fileData(base_path + BinSuffix, ios::in | ios::binary);
     fileData.seekg(sizeof(NextLabel), ios::beg);
 
     NextLabel l;
     T r;
-    while (fileData>>r>>l)
+    while (fileData >> r >> l)
     {
         regs.push_back(r);
         labs.push_back(l);
     }
-    
-
-    fileData.close(); 
+    fileData.close();
+    fileData.open(base_path + AuxSuffix, ios::in | ios::binary);
+    while (fileData >> r >> l)
+    {
+        regs.push_back(r);
+        labs.push_back(l);
+    }
+    fileData.close();
 }
 
 template <typename T>
@@ -258,7 +264,8 @@ void SequentialFile<T>::add(T reg)
     fileAux.seekg(0, ios::beg);
     while (fileAux >> aux_prev)
     {
-        if(reg == aux_prev) throw("La llave debe ser diferente");
+        if (reg == aux_prev)
+            throw("La llave debe ser diferente");
         else if (aux_prev > prev && aux_prev < reg)
         {
             prev = aux_prev;
@@ -278,7 +285,7 @@ void SequentialFile<T>::add(T reg)
     fileAux.close();
 
     fileAux.open(base_path + AuxSuffix, ios::in | ios::out | ios::binary);
-    fileAux.seekg(0,ios::end);
+    fileAux.seekg(0, ios::end);
     prev_ptr = {((int)fileAux.tellp()) / row_sizeof, 'a'};
 
     if (!prev_in_aux)
