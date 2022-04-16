@@ -41,7 +41,7 @@ template <typename T>
 class SequentialFile
 {
 private:
-    int row_sizeof, K_max_aux;
+    int row_sizeof, K_max_aux, eliminados = 0;
     string base_path;
     void CSV_Loader(string _base_path);
     void reorganize();
@@ -57,6 +57,57 @@ public:
     T search(Key_t key);
     void loadAll(vector<T> &regs, vector<NextLabel> &labs);
 };
+
+template <typename T>
+template <typename Key_t>
+void SequentialFile<T>::remove(Key_t key)
+{
+    if (eliminados >= K_max_aux)
+        reorganize();
+
+    fstream file(base_path + BinSuffix, ios::in | ios::binary);
+    file.seekg(0, ios::end);
+    int l = 0;
+    int r = (file.tellg() - row_sizeof - sizeof(NextLabel)) / row_sizeof;
+
+    T row_reg;
+    const T key_reg(key);
+    NextLabel row_label;
+    while (l <= r)
+    {
+        int m = (l + r) / 2;
+        file.seekg(sizeof(NextLabel) + m * row_sizeof, ios::beg);
+        file >> row_reg;
+        if (key_reg > row_reg)
+            l = m + 1;
+        else if (key_reg < row_reg)
+            r = m - 1;
+        else
+        {
+            file >> row_label;
+            break;
+        }
+    }
+
+    if (key_reg != row_reg)
+    {
+        while (file >> row_reg)
+        {
+            if (key_reg == row_reg)
+                file >> row_label;
+            else
+                file.ignore(NextLabel);
+        }
+        if (key_reg != row_reg)
+        {
+            throw("La llave no existe");
+        }
+    }
+
+    file.close();
+
+    eliminados++;
+}
 
 template <typename T>
 void SequentialFile<T>::reorganize()
