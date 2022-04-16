@@ -85,6 +85,8 @@ void ISAM_SPARSE_INDEX::add(Record record) {
         } else {
             Entry entry;
             fileWrite.write((char*)&entry, sizeof(Entry));
+            fileWrite.close();
+            break;
         }
     } while (number_of_indexes >= MAX_SIZE_ENTRIES);
 }
