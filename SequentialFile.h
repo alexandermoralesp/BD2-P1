@@ -67,10 +67,11 @@ template <typename T>
 void SequentialFile<T>::loadAll(vector<T> &regs, vector<NextLabel> &labs)
 {
     ifstream fileData(base_path + BinSuffix, ios::in | ios::binary);
-    fileData.seekg(sizeof(NextLabel), ios::beg);
 
     NextLabel l;
     T r;
+    fileData >> l;
+    labs.push_back(l);
     while (fileData >> r >> l)
     {
         regs.push_back(r);
@@ -131,7 +132,10 @@ vector<T> SequentialFile<T>::rangeSearch(Key_t begin_key, Key_t end_key)
                 if (row_group[i] == key_group[i])
                 {
                     fileAux >> label_group[i];
+                    break;
                 }
+                else
+                    fileAux.ignore(sizeof(NextLabel));
             }
 
             if (row_group[i] != key_group[i])
@@ -251,12 +255,11 @@ void SequentialFile<T>::add(T reg)
     {
         fileData.seekg(0, ios::beg);
         fileData >> prev_ptr;
-        //
     }
     else
     {
-        fileData.seekg(l * row_sizeof, ios::beg);
-        fileData >> prev_ptr;
+        fileData.seekg(l * row_sizeof - sizeof(T), ios::beg);
+        fileData >> prev >> prev_ptr;
         prev_ptr_offset = fileData.tellg() - sizeof(NextLabel);
     }
 
@@ -266,8 +269,10 @@ void SequentialFile<T>::add(T reg)
     {
         if (reg == aux_prev)
             throw("La llave debe ser diferente");
-        else if (aux_prev > prev && aux_prev < reg)
+        else if ((r == -1 || aux_prev > prev) && aux_prev < reg)
         {
+            if (r == -1)
+                r--;
             prev = aux_prev;
             fileAux >> prev_ptr;
             prev_ptr_offset = fileAux.tellg() - sizeof(NextLabel);
@@ -290,7 +295,10 @@ void SequentialFile<T>::add(T reg)
 
     if (!prev_in_aux)
     {
-        fileData.seekp(prev_ptr_offset, ios::beg);
+        if (r == -1)
+            fileData.seekp(0, ios::beg);
+        else
+            fileData.seekp(prev_ptr_offset, ios::beg);
         fileData << prev_ptr;
     }
     else
