@@ -6,13 +6,13 @@
 #include <vector>
 #include <algorithm>
 #include "Registros.h"
+#include <ctgmath>
 
 using namespace std;
 
 const string BinSuffix = ".dat";
 const string AuxSuffix = "_aux" + BinSuffix;
 const string CSVSuffix = ".csv";
-const int K_max_aux = 5;
 
 struct NextLabel
 {
@@ -41,9 +41,10 @@ template <typename T>
 class SequentialFile
 {
 private:
-    int row_sizeof;
+    int row_sizeof, K_max_aux;
     string base_path;
     void CSV_Loader(string _base_path);
+    void reorganize();
 
 public:
     SequentialFile(string _base_path);
@@ -54,7 +55,30 @@ public:
     void remove(Key_t key);
     template <typename Key_t>
     T search(Key_t key);
+    void loadAll(vector<T> &regs, vector<NextLabel> &labs);
 };
+
+template <typename T>
+void SequentialFile<T>::reorganize()
+{
+}
+
+template <typename T>
+void SequentialFile<T>::loadAll(vector<T> &regs, vector<NextLabel> &labs){
+    ifstream fileData(base_path + BinSuffix, ios::in | ios::binary);
+    fileData.seekg(sizeof(NextLabel), ios::beg);
+
+    NextLabel l;
+    T r;
+    while (fileData>>r>>l)
+    {
+        regs.push_back(r);
+        labs.push_back(l);
+    }
+    
+
+    fileData.close(); 
+}
 
 template <typename T>
 template <typename Key_t>
@@ -166,7 +190,10 @@ T SequentialFile<T>::search(Key_t key)
     while (file >> result)
     {
         if (result == objective)
+        {
+            file.close();
             return result;
+        }
         file.ignore(sizeof(NextLabel));
     }
 
@@ -178,10 +205,92 @@ T SequentialFile<T>::search(Key_t key)
 template <typename T>
 void SequentialFile<T>::add(T reg)
 {
-    ifstream fileData(base_path + BinSuffix, ios::in | ios::binary);
-    ifstream fileAux(base_path + AuxSuffix, ios::in | ios::binary);
+    fstream fileAux(base_path + AuxSuffix, ios::in | ios::out | ios::binary);
+    fileAux.seekg(0, ios::end);
+    if (int(fileAux.tellg()) / row_sizeof >= K_max_aux)
+    {
+        fileAux.close();
+        reorganize();
+    }
+    else
+        fileAux.close();
+    fileAux.open(base_path + AuxSuffix, ios::in | ios::out | ios::binary);
 
-    
+    fstream fileData(base_path + BinSuffix, ios::in | ios::out | ios::binary);
+
+    fileData.seekg(0, ios::end);
+    int l = 0, r = (fileData.tellg() - row_sizeof - sizeof(NextLabel)) / row_sizeof;
+    int n_regs = r + 1;
+    T prev;
+    int prev_ptr_offset;
+    bool prev_in_aux = false;
+    while (l <= r)
+    {
+        int m = (l + r) / 2;
+        fileData.seekg(sizeof(NextLabel) + m * row_sizeof, ios::beg);
+        fileData >> prev;
+        if (reg > prev)
+            l = m + 1;
+        else if (reg < prev)
+            r = m - 1;
+        else
+            break;
+    }
+
+    if (l <= r)
+        throw("La llave debe ser diferente");
+
+    NextLabel prev_ptr;
+    if (r == -1)
+    {
+        fileData.seekg(0, ios::beg);
+        fileData >> prev_ptr;
+        //
+    }
+    else
+    {
+        fileData.seekg(l * row_sizeof, ios::beg);
+        fileData >> prev_ptr;
+        prev_ptr_offset = fileData.tellg() - sizeof(NextLabel);
+    }
+
+    T aux_prev;
+    fileAux.seekg(0, ios::beg);
+    while (fileAux >> aux_prev)
+    {
+        if(reg == aux_prev) throw("La llave debe ser diferente");
+        else if (aux_prev > prev && aux_prev < reg)
+        {
+            prev = aux_prev;
+            fileAux >> prev_ptr;
+            prev_ptr_offset = fileAux.tellg() - sizeof(NextLabel);
+            if (!prev_in_aux)
+                prev_in_aux = true;
+        }
+        else
+            fileAux.ignore(sizeof(NextLabel));
+    }
+
+    fileAux.close();
+    fileAux.open(base_path + AuxSuffix, ios::out | ios::binary | ios::app);
+    fileAux.seekp(0, ios::end);
+    fileAux << reg << prev_ptr;
+    fileAux.close();
+
+    fileAux.open(base_path + AuxSuffix, ios::in | ios::out | ios::binary);
+    fileAux.seekg(0,ios::end);
+    prev_ptr = {((int)fileAux.tellp()) / row_sizeof, 'a'};
+
+    if (!prev_in_aux)
+    {
+        fileData.seekp(prev_ptr_offset, ios::beg);
+        fileData << prev_ptr;
+    }
+    else
+    {
+        fileAux.seekp(prev_ptr_offset, ios::beg);
+        fileAux << prev_ptr;
+    }
 
     fileData.close();
     fileAux.close();
@@ -231,6 +340,11 @@ SequentialFile<T>::SequentialFile(string _base_path)
         const string csvDB = base_path + CSVSuffix;
         CSV_Loader(csvDB);
     }
+    fCreate.close();
+
+    fCreate.open(binaryDB, ios::in | ios::binary);
+    fCreate.seekg(0, ios::end);
+    K_max_aux = static_cast<int>(log2((int(fCreate.tellg()) - sizeof(NextLabel)) / row_sizeof));
     fCreate.close();
 }
 

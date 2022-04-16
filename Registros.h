@@ -17,6 +17,7 @@ struct Registros::Cereal
 {
     Cereal() = default;
     Cereal(string key);
+    Cereal(string _id, char _mfr, char _type, int _calories, int _protein, int _fat, int _sodium, int _fiber, int _carbo, int _sugars, int _potass, int _vitamins, int _shelf, float _weight, float _cups, float _rating);
     char id[max_name_len]; // name
     char mfr, type;
     int calories, protein, fat, sodium, fiber, carbo, sugars, potass, vitamins, shelf;
@@ -28,7 +29,12 @@ struct Registros::Cereal
     bool operator>(Registros::Cereal c);
 };
 
-
+Registros::Cereal::Cereal(string _id, char _mfr, char _type, int _calories, int _protein, int _fat, int _sodium, int _fiber, int _carbo, int _sugars, int _potass, int _vitamins, int _shelf, float _weight, float _cups, float _rating)
+    : mfr(_mfr), type(_type), calories(_calories), protein(_protein), fat(_fat), sodium(_sodium), fiber(_fiber), carbo(_carbo), sugars(_sugars), potass(_potass), vitamins(_vitamins), shelf(_shelf), weight(_weight), cups(_cups), rating(_rating)
+{
+    int length = _id.copy(id, max_name_len);
+    id[length] = '\0';
+}
 
 Registros::Cereal::Cereal(string key)
 {
@@ -36,32 +42,37 @@ Registros::Cereal::Cereal(string key)
     id[length] = '\0';
 }
 
-istream& operator>>(istream& is, Registros::Cereal &c){
-    is.read((char*) &c, sizeof(Registros::Cereal));
+istream &operator>>(istream &is, Registros::Cereal &c)
+{
+    is.read((char *)&c, sizeof(Registros::Cereal));
     return is;
 }
 
-ostream& operator<<(ostream& os, Registros::Cereal c){
-    os.write((char*) &c, sizeof(Registros::Cereal));
+ostream &operator<<(ostream &os, Registros::Cereal c)
+{
+    os.write((char *)&c, sizeof(Registros::Cereal));
     return os;
 }
 
-bool Registros::Cereal::operator>(Registros::Cereal c){
-    return !(string(id)==string(c.id) || string(id)<string(c.id));
+bool Registros::Cereal::operator>(Registros::Cereal c)
+{
+    return !(string(id) == string(c.id) || string(id) < string(c.id));
 }
 
-bool Registros::Cereal::operator==(Registros::Cereal c){
-    return string(id)==string(c.id);
+bool Registros::Cereal::operator==(Registros::Cereal c)
+{
+    return string(id) == string(c.id);
 }
 
-bool Registros::Cereal::operator!=(Registros::Cereal c){
-    return !(string(id)==string(c.id));
+bool Registros::Cereal::operator!=(Registros::Cereal c)
+{
+    return !(string(id) == string(c.id));
 }
 
 bool Registros::Cereal::operator<(Registros::Cereal c)
 {
     int thislen = string(id).size(), clen = string(c.id).size();
-    int minlen = (thislen <  clen? thislen : clen);
+    int minlen = (thislen < clen ? thislen : clen);
     for (int i = 0; i < minlen; i++)
     {
         if (id[i] < c.id[i])
