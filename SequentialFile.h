@@ -45,9 +45,9 @@ private:
     int row_sizeof, K_max_aux, eliminados = 0;
     string base_path;
     void CSV_Loader(string _base_path);
-    void reorganize();
 
 public:
+    void reorganize();
     SequentialFile(string _base_path);
     void add(T reg);
     template <typename Key_t>
@@ -63,58 +63,105 @@ template <typename T>
 template <typename Key_t>
 void SequentialFile<T>::remove(Key_t key)
 {
-    if (eliminados >= K_max_aux)
-        reorganize();
+    fstream dataFile(base_path+BinSuffix, ios::out|ios::in|ios::binary), auxFile(base_path+AuxSuffix, ios::in|ios::binary);
 
-    fstream file(base_path + BinSuffix, ios::in | ios::binary);
-    file.seekg(0, ios::end);
-    int l = 0, m;
-    int r = (file.tellg() - row_sizeof - sizeof(NextLabel)) / row_sizeof;
+    // Binary Search to find key in dataFile
+    dataFile.seekg(0, ios::end);
+    int l = 0, r = (dataFile.tellg()-row_sizeof-sizeof(NextLabel))/row_sizeof;
 
-    T row_reg;
-    const T key_reg(key);
-    NextLabel row_label;
-    bool row_in_aux = false;
-    while (l <= r)
-    {
-        m = (l + r) / 2;
-        file.seekg(sizeof(NextLabel) + m * row_sizeof, ios::beg);
-        file >> row_reg;
-        if (key_reg > row_reg)
-            l = m + 1;
-        else if (key_reg < row_reg)
-            r = m - 1;
-        else
-        {
-            file >> row_label;
+
+    T RowMatch, key_to_row(key);
+    NextLabel RowPtr, PreviousRowPtr{0, 'd'}, PreviousRowPtrReader;
+
+    while(l<=r){
+        int m = (l+r)/2;
+        dataFile.seekg(sizeof(NextLabel)+m*row_sizeof, ios::beg);
+        dataFile>>RowMatch;
+        if(RowMatch<key_to_row){
+            l = m+1;
+        }
+        else if(RowMatch>key_to_row){
+            r = m-1;
+        }
+        else{
+            dataFile>>RowPtr;
+            PreviousRowPtr.nextRow = m+1;
             break;
         }
     }
-
-    if (l > r)
-    {
-        m = 0;
-        row_in_aux = true;
-        while (file >> row_reg)
-        {
-            if (key_reg == row_reg)
-            {
-                file >> row_label;
+    // Linear search to find key in AuxFile in case key not found in dataFile
+    if(!(l<=r)){
+        PreviousRowPtr.nextRow = 1;
+        PreviousRowPtr.nextRowFile = 'a';
+        auxFile.seekg(0, ios::beg);
+        while(auxFile>>RowMatch){
+            if(RowMatch!=key_to_row){
+                auxFile.ignore(sizeof(NextLabel));
+                PreviousRowPtr.nextRow++;
+            }
+            else{
+                auxFile>>RowPtr;
                 break;
             }
-            else
-                file.ignore(NextLabel);
-            m++;
-        }
-        if (key_reg != row_reg)
-        {
-            throw("La llave no existe");
         }
     }
 
-    file.close();
+    // Error if key not found
+    if(key_to_row != RowMatch) throw("Llave no hallada");
 
-    eliminados++;
+    // Find row which ptr points to the key row
+
+    // Check if first pointer in dataFile points to row
+    dataFile.seekg(0, ios::beg);
+    dataFile>>PreviousRowPtrReader;
+    if(PreviousRowPtrReader==PreviousRowPtr){
+        dataFile.seekp(0, ios::beg);
+        dataFile<<RowPtr;
+    }
+    else{
+        // Binary Search to find ptr in dataFile
+        l = 0;
+        dataFile.seekg(0, ios::end);
+        r = (dataFile.tellg()-row_sizeof-sizeof(NextLabel))/row_sizeof;
+
+        while (l<=r)
+        {
+            int m = (l+r)/2;
+            dataFile.seekg(m*row_sizeof, ios::beg);
+            dataFile>>PreviousRowPtrReader;
+            if(PreviousRowPtrReader == PreviousRowPtr){
+                dataFile.seekp(m*row_sizeof, ios::beg);
+                dataFile<<RowPtr;
+                dataFile.close(); auxFile.close();
+                return;
+            }
+            else if(PreviousRowPtrReader.nextRow < PreviousRowPtr.nextRow){
+                l = m+1;
+            }
+            else{
+                r = m-1;
+            }
+        }
+        
+        // Linear search in auxFile
+
+        auxFile.seekg(0, ios::end);
+        r = auxFile.tellg()/row_sizeof;
+        for(l = 0; l<r; r++){
+            auxFile.seekg(row_sizeof*l - sizeof(T), ios::beg);
+            auxFile>>PreviousRowPtrReader;
+            if(PreviousRowPtrReader == PreviousRowPtr){
+                auxFile.seekp(row_sizeof*l - sizeof(T), ios::beg);
+                auxFile<<RowPtr;
+                dataFile.close(); auxFile.close();
+                return;
+            }
+        }
+
+    }
+    
+    dataFile.close(); auxFile.close();
+
 }
 
 template <typename T>
@@ -131,7 +178,8 @@ void SequentialFile<T>::reorganize()
     NextLabel write_label, pass_label;
 
     fileData >> pass_label;
-    for (write_label = {1, 'd'}; pass_label.nextRow == -1; write_label.nextRow++)
+    fileData.seekg(0, ios::beg);
+    for (write_label = {1, 'd'}; pass_label.nextRow != -1; write_label.nextRow++)
     {
         fileData << write_label;
         if (pass_label.nextRowFile == 'd')
@@ -142,12 +190,11 @@ void SequentialFile<T>::reorganize()
                 fileData >> save_reg >> pass_label;
                 save_regs.push(save_reg);
                 fileData.seekg(-1 * row_sizeof, ios::cur);
-                fileData << save_regs.top();
+                fileData << save_regs.front();
+                save_regs.pop();
             }
             else
-            {
                 fileData.ignore(sizeof(T));
-            }
         }
         else if (pass_label.nextRowFile == 'a')
         {
@@ -162,6 +209,8 @@ void SequentialFile<T>::reorganize()
 
     fileData << pass_label;
 
+    fileAux.close();
+    fileAux.open(base_path + AuxSuffix, ios::binary | ios::out | ios::trunc);
     fileAux.close();
     fileData.close();
 }
