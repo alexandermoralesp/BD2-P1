@@ -25,6 +25,10 @@ bool operator==(NextLabel a, NextLabel b)
 {
     return a.nextRow == b.nextRow && a.nextRowFile == b.nextRowFile;
 }
+bool operator!=(NextLabel a, NextLabel b)
+{
+    return !(a==b);
+}
 
 ostream &operator<<(ostream &os, NextLabel n)
 {
@@ -42,7 +46,7 @@ template <typename T>
 class SequentialFile
 {
 private:
-    int row_sizeof, K_max_aux, eliminados = 0;
+    int row_sizeof, sizeData, sizeAux, K_max_aux;
     string base_path;
     void CSV_Loader(string _base_path);
 
@@ -90,24 +94,25 @@ void SequentialFile<T>::remove(Key_t key)
         }
     }
     // Linear search to find key in AuxFile in case key not found in dataFile
-    if(!(l<=r)){
+    if(!(l<=r) || RowPtr.nextRow == 0){
         PreviousRowPtr.nextRow = 1;
         PreviousRowPtr.nextRowFile = 'a';
         auxFile.seekg(0, ios::beg);
         while(auxFile>>RowMatch){
             if(RowMatch!=key_to_row){
                 auxFile.ignore(sizeof(NextLabel));
-                PreviousRowPtr.nextRow++;
             }
             else{
                 auxFile>>RowPtr;
-                break;
+                if(RowPtr.nextRow != 0)
+                    break;
             }
+            PreviousRowPtr.nextRow++;
         }
     }
 
     // Error if key not found
-    if(key_to_row != RowMatch) throw("Llave no hallada");
+    if(key_to_row != RowMatch || RowPtr.nextRow == 0) throw("Llave no hallada");
 
     // Find row which ptr points to the key row
 
@@ -132,8 +137,7 @@ void SequentialFile<T>::remove(Key_t key)
             if(PreviousRowPtrReader == PreviousRowPtr){
                 dataFile.seekp(m*row_sizeof, ios::beg);
                 dataFile<<RowPtr;
-                dataFile.close(); auxFile.close();
-                return;
+                break;
             }
             else if(PreviousRowPtrReader.nextRow < PreviousRowPtr.nextRow){
                 l = m+1;
@@ -147,17 +151,29 @@ void SequentialFile<T>::remove(Key_t key)
 
         auxFile.seekg(0, ios::end);
         r = auxFile.tellg()/row_sizeof;
-        for(l = 0; l<r; r++){
+        for(l = 0; l<r, PreviousRowPtrReader != PreviousRowPtr; r++){
             auxFile.seekg(row_sizeof*l - sizeof(T), ios::beg);
             auxFile>>PreviousRowPtrReader;
             if(PreviousRowPtrReader == PreviousRowPtr){
                 auxFile.seekp(row_sizeof*l - sizeof(T), ios::beg);
                 auxFile<<RowPtr;
-                dataFile.close(); auxFile.close();
-                return;
+                break;
             }
         }
 
+    }
+
+    if(PreviousRowPtr.nextRowFile == 'd'){
+        dataFile.seekp(row_sizeof*PreviousRowPtr.nextRow, ios::beg);
+        PreviousRowPtr.nextRow = 0;
+        dataFile<<PreviousRowPtr;
+        sizeData--;
+    }
+    else {
+        auxFile.seekp((PreviousRowPtr.nextRow-1)*row_sizeof+sizeof(T), ios::beg);
+        PreviousRowPtr.nextRow = 0;
+        auxFile<<PreviousRowPtr;
+        sizeAux--;
     }
     
     dataFile.close(); auxFile.close();
@@ -275,7 +291,7 @@ vector<T> SequentialFile<T>::rangeSearch(Key_t begin_key, Key_t end_key)
                 break;
             }
         }
-        if (key_group[i] != row_group[i])
+        if (key_group[i] != row_group[i] || label_group[i].nextRow == 0)
         {
             fileAux.seekg(0, ios::beg);
 
@@ -284,13 +300,13 @@ vector<T> SequentialFile<T>::rangeSearch(Key_t begin_key, Key_t end_key)
                 if (row_group[i] == key_group[i])
                 {
                     fileAux >> label_group[i];
-                    break;
+                    if(label_group[i].nextRow != 0) break;
                 }
                 else
                     fileAux.ignore(sizeof(NextLabel));
             }
 
-            if (row_group[i] != key_group[i])
+            if (row_group[i] != key_group[i] || label_group[i].nextRow == 0)
                 i ? throw("Llave de cierre no encontrada") : throw("Llave de inicio no encontrada");
         }
     }
@@ -329,6 +345,7 @@ T SequentialFile<T>::search(Key_t key)
     int r = (file.tellg() - row_sizeof - sizeof(NextLabel)) / row_sizeof;
 
     T result, objective(key);
+    NextLabel removeChecker;
 
     while (l <= r)
     {
@@ -339,13 +356,13 @@ T SequentialFile<T>::search(Key_t key)
             l = m + 1;
         else if (objective < result)
             r = m - 1;
-        else
-        {
-            file.close();
-            return result;
-        }
+        else{
+            file>>removeChecker;
+            break;}
     }
     file.close();
+
+    if(l <= r && removeChecker.nextRow != 0) return result;
 
     file.open(base_path + AuxSuffix, ios::in | ios::binary);
 
@@ -461,6 +478,8 @@ void SequentialFile<T>::add(T reg)
 
     fileData.close();
     fileAux.close();
+
+    sizeAux++;
 }
 
 template <typename T>
@@ -476,6 +495,8 @@ void SequentialFile<T>::CSV_Loader(string csv)
         registros.push_back(registro);
     }
     sort(registros.begin(), registros.end());
+
+    sizeData = registros.size();
 
     csv_file.close();
 
@@ -498,6 +519,8 @@ SequentialFile<T>::SequentialFile(string _base_path)
 {
     const string binaryDB = base_path + BinSuffix, auxDB = base_path + AuxSuffix;
     fstream fCreate(auxDB, ios::in | ios::out | ios::app);
+    fCreate.seekg(0, ios::end);
+    sizeAux = fCreate.tellg()/row_sizeof;
     fCreate.close();
     fCreate.open(binaryDB, ios::in | ios::out | ios::app);
     fCreate.seekp(0, ios::end);
@@ -511,6 +534,7 @@ SequentialFile<T>::SequentialFile(string _base_path)
 
     fCreate.open(binaryDB, ios::in | ios::binary);
     fCreate.seekg(0, ios::end);
+    sizeData = (fCreate.tellg()-sizeof(NextLabel))/row_sizeof;
     K_max_aux = static_cast<int>(log2((int(fCreate.tellg()) - sizeof(NextLabel)) / row_sizeof));
     fCreate.close();
 }

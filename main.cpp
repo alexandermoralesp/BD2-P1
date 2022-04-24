@@ -21,14 +21,23 @@ int main(){
     sf.add(radd2);
     sf.add(radd3); */
 
-    vector<Registros::Cereal> v1;
-    vector<NextLabel> v2;
-    sf.loadAll(v1,v2);
 
     // auto reg = sf.search<string>("Mueslix Crispy Blend");
     // auto regs = sf.rangeSearch<string>("Bran Chex", "Froot Loops");
+    vector<Registros::Cereal> v1;
+    vector<NextLabel> v2;
+    sf.loadAll(v1,v2);
     // auto regs = sf.rangeSearch<string>("100\% Abzzzzz", "Froot Loops");
 
+    try{
+        // sf.remove("Cap'n'Crunch");
+        // sf.search("Cap'n'Crunch");
+        // auto regs = sf.rangeSearch<string>("Cap'n'Crunch", "Froot Loops");
+        // auto regs = sf.rangeSearch<string>("Bran Chex", "Cap'n'Crunch");
+    }
+    catch(char const* a){
+        cout<<a;
+    }
 
     return 0;
 }
