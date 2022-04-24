@@ -15,6 +15,7 @@ struct Registros::Cereal
 {
     Cereal() = default;
     Cereal(std::string key);
+    Cereal(std::string _id, char _attr1, int _attr2, int _attr3);
     Cereal(std::string _id, char _mfr, char _type, int _calories, int _protein, int _fat, int _sodium, int _fiber, int _carbo, int _sugars, int _potass, int _vitamins, int _shelf, float _weight, float _cups, float _rating);
     char id[max_name_len]; // name
     char mfr, type;
@@ -26,6 +27,12 @@ struct Registros::Cereal
     bool operator<(Registros::Cereal c);
     bool operator>(Registros::Cereal c);
 };
+
+Registros::Cereal::Cereal(std::string _id, char _attr1, int _attr2, int _attr3)
+    :mfr(_attr1), type('f'),calories(_attr2), protein(_attr3), fat(3), sodium(2), fiber(12), carbo(32), sugars(1), potass(4), vitamins(7), shelf(0), weight(34.5), cups(89.3), rating(3.1){
+        int length = _id.copy(id, max_name_len);
+    id[length] = '\0';
+}
 
 Registros::Cereal::Cereal(std::string _id, char _mfr, char _type, int _calories, int _protein, int _fat, int _sodium, int _fiber, int _carbo, int _sugars, int _potass, int _vitamins, int _shelf, float _weight, float _cups, float _rating)
     : mfr(_mfr), type(_type), calories(_calories), protein(_protein), fat(_fat), sodium(_sodium), fiber(_fiber), carbo(_carbo), sugars(_sugars), potass(_potass), vitamins(_vitamins), shelf(_shelf), weight(_weight), cups(_cups), rating(_rating)
