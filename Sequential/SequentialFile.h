@@ -7,7 +7,7 @@
 #include <algorithm>
 #include "Registros.h"
 #include <ctgmath>
-#include<cstdio>
+#include <cstdio>
 
 const std::string BinSuffix = ".dat";
 const std::string AuxSuffix = "_aux" + BinSuffix;
@@ -25,7 +25,7 @@ bool operator==(NextLabel a, NextLabel b)
 }
 bool operator!=(NextLabel a, NextLabel b)
 {
-    return !(a==b);
+    return !(a == b);
 }
 
 std::ostream &operator<<(std::ostream &os, NextLabel n)
@@ -65,46 +65,54 @@ template <typename Record>
 template <typename Key_t>
 void SequentialFile<Record>::remove(Key_t key)
 {
-    if(eliminados>= K_max_aux) reorganize();
+    if (eliminados >= K_max_aux)
+        reorganize();
 
-    std::fstream dataFile(base_path+BinSuffix, std::ios::out|std::ios::in|std::ios::binary), auxFile(base_path+AuxSuffix, std::ios::in|std::ios::binary);
+    std::fstream dataFile(base_path + BinSuffix, std::ios::out | std::ios::in | std::ios::binary), auxFile(base_path + AuxSuffix, std::ios::in | std::ios::binary);
 
     // Binary Search to find key in dataFile
     dataFile.seekg(0, std::ios::end);
-    int l = 0, r = (dataFile.tellg()-row_sizeof-sizeof(NextLabel))/row_sizeof;
-
+    int l = 0, r = (dataFile.tellg() - row_sizeof - sizeof(NextLabel)) / row_sizeof;
 
     Record RowMatch, key_to_row(key);
     NextLabel RowPtr, PreviousRowPtr{0, 'd'}, PreviousRowPtrReader;
 
-    while(l<=r){
-        int m = (l+r)/2;
-        dataFile.seekg(sizeof(NextLabel)+m*row_sizeof, std::ios::beg);
-        dataFile>>RowMatch;
-        if(RowMatch<key_to_row){
-            l = m+1;
+    while (l <= r)
+    {
+        int m = (l + r) / 2;
+        dataFile.seekg(sizeof(NextLabel) + m * row_sizeof, std::ios::beg);
+        dataFile >> RowMatch;
+        if (RowMatch < key_to_row)
+        {
+            l = m + 1;
         }
-        else if(RowMatch>key_to_row){
-            r = m-1;
+        else if (RowMatch > key_to_row)
+        {
+            r = m - 1;
         }
-        else{
-            dataFile>>RowPtr;
-            PreviousRowPtr.nextRow = m+1;
+        else
+        {
+            dataFile >> RowPtr;
+            PreviousRowPtr.nextRow = m + 1;
             break;
         }
     }
     // Linear search to find key in AuxFile in case key not found in dataFile
-    if(!(l<=r) || RowPtr.nextRow == 0){
+    if (!(l <= r) || RowPtr.nextRow == 0)
+    {
         PreviousRowPtr.nextRow = 1;
         PreviousRowPtr.nextRowFile = 'a';
         auxFile.seekg(0, std::ios::beg);
-        while(auxFile>>RowMatch){
-            if(RowMatch!=key_to_row){
+        while (auxFile >> RowMatch)
+        {
+            if (RowMatch != key_to_row)
+            {
                 auxFile.ignore(sizeof(NextLabel));
             }
-            else{
-                auxFile>>RowPtr;
-                if(RowPtr.nextRow != 0)
+            else
+            {
+                auxFile >> RowPtr;
+                if (RowPtr.nextRow != 0)
                     break;
             }
             PreviousRowPtr.nextRow++;
@@ -112,73 +120,82 @@ void SequentialFile<Record>::remove(Key_t key)
     }
 
     // Error if key not found
-    if(key_to_row != RowMatch || RowPtr.nextRow == 0) throw("Llave no hallada");
+    if (key_to_row != RowMatch || RowPtr.nextRow == 0)
+        throw("Llave no hallada");
 
     // Find row which ptr points to the key row
 
     // Check if first pointer in dataFile points to row
     dataFile.seekg(0, std::ios::beg);
-    dataFile>>PreviousRowPtrReader;
-    if(PreviousRowPtrReader==PreviousRowPtr){
+    dataFile >> PreviousRowPtrReader;
+    if (PreviousRowPtrReader == PreviousRowPtr)
+    {
         dataFile.seekp(0, std::ios::beg);
-        dataFile<<RowPtr;
+        dataFile << RowPtr;
     }
-    else{
+    else
+    {
         // Binary Search to find ptr in dataFile
         l = 0;
         dataFile.seekg(0, std::ios::end);
-        r = (dataFile.tellg()-row_sizeof-sizeof(NextLabel))/row_sizeof;
+        r = (dataFile.tellg() - row_sizeof - sizeof(NextLabel)) / row_sizeof;
 
-        while (l<=r)
+        while (l <= r)
         {
-            int m = (l+r)/2;
-            dataFile.seekg(m*row_sizeof, std::ios::beg);
-            dataFile>>PreviousRowPtrReader;
-            if(PreviousRowPtrReader == PreviousRowPtr){
-                dataFile.seekp(m*row_sizeof, std::ios::beg);
-                dataFile<<RowPtr;
+            int m = (l + r) / 2;
+            dataFile.seekg(m * row_sizeof, std::ios::beg);
+            dataFile >> PreviousRowPtrReader;
+            if (PreviousRowPtrReader == PreviousRowPtr)
+            {
+                dataFile.seekp(m * row_sizeof, std::ios::beg);
+                dataFile << RowPtr;
                 break;
             }
-            else if(PreviousRowPtrReader.nextRow < PreviousRowPtr.nextRow){
-                l = m+1;
+            else if (PreviousRowPtrReader.nextRow < PreviousRowPtr.nextRow)
+            {
+                l = m + 1;
             }
-            else{
-                r = m-1;
+            else
+            {
+                r = m - 1;
             }
         }
-        
+
         // Linear search in auxFile
 
         auxFile.seekg(0, std::ios::end);
-        r = auxFile.tellg()/row_sizeof;
-        for(l = 0; l<r, PreviousRowPtrReader != PreviousRowPtr; r++){
-            auxFile.seekg(row_sizeof*l - sizeof(Record), std::ios::beg);
-            auxFile>>PreviousRowPtrReader;
-            if(PreviousRowPtrReader == PreviousRowPtr){
-                auxFile.seekp(row_sizeof*l - sizeof(Record), std::ios::beg);
-                auxFile<<RowPtr;
+        r = auxFile.tellg() / row_sizeof;
+        for (l = 0; l < r, PreviousRowPtrReader != PreviousRowPtr; r++)
+        {
+            auxFile.seekg(row_sizeof * l - sizeof(Record), std::ios::beg);
+            auxFile >> PreviousRowPtrReader;
+            if (PreviousRowPtrReader == PreviousRowPtr)
+            {
+                auxFile.seekp(row_sizeof * l - sizeof(Record), std::ios::beg);
+                auxFile << RowPtr;
                 break;
             }
         }
-
     }
 
-    if(PreviousRowPtr.nextRowFile == 'd'){
-        dataFile.seekp(row_sizeof*PreviousRowPtr.nextRow, std::ios::beg);
+    if (PreviousRowPtr.nextRowFile == 'd')
+    {
+        dataFile.seekp(row_sizeof * PreviousRowPtr.nextRow, std::ios::beg);
         PreviousRowPtr.nextRow = 0;
-        dataFile<<PreviousRowPtr;
+        dataFile << PreviousRowPtr;
         sizeData--;
     }
-    else {
-        auxFile.seekp((PreviousRowPtr.nextRow-1)*row_sizeof+sizeof(Record), std::ios::beg);
+    else
+    {
+        auxFile.seekp((PreviousRowPtr.nextRow - 1) * row_sizeof + sizeof(Record), std::ios::beg);
         PreviousRowPtr.nextRow = 0;
-        auxFile<<PreviousRowPtr;
+        auxFile << PreviousRowPtr;
         sizeAux--;
     }
     eliminados++;
-    
-    dataFile.close(); auxFile.close();
 
+    dataFile.close();
+    auxFile.close();
 }
 
 template <typename Record>
@@ -192,44 +209,46 @@ void SequentialFile<Record>::reorganize()
     std::fstream fileAux(base_path + AuxSuffix, std::ios::in | std::ios::binary);
 
     std::string copyFileName = "tCopy.dat";
-    std::fstream tempCopyWrite(copyFileName, std::ios::out|std::ios::app|std::ios::binary);
-    
+    std::fstream tempCopyWrite(copyFileName, std::ios::out | std::ios::app | std::ios::binary);
+
     NextLabel printPtr;
     Record printRecord;
-    fileData>>printPtr;
-    while(printPtr.nextRow !=  -1){
-        tempCopyWrite<<printPtr;
-        if(printPtr.nextRowFile == 'd')
-            fileData>>printRecord>>printPtr;
+    fileData >> printPtr;
+    while (printPtr.nextRow != -1)
+    {
+        tempCopyWrite << printPtr;
+        if (printPtr.nextRowFile == 'd')
+            fileData >> printRecord >> printPtr;
         else
-            fileAux>>printRecord>>printPtr;
-        tempCopyWrite<<printRecord;
+            fileAux >> printRecord >> printPtr;
+        tempCopyWrite << printRecord;
     }
-    tempCopyWrite<<printPtr;
+    tempCopyWrite << printPtr;
 
     tempCopyWrite.close();
     fileData.close();
     fileAux.close();
 
-    fileData.open(base_path+BinSuffix, std::ios::trunc|std::ios::out);
+    fileData.open(base_path + BinSuffix, std::ios::trunc | std::ios::out);
     fileData.close();
 
-    tempCopyWrite.open(copyFileName, std::ios::in|std::ios::binary);
-    fileData.open(base_path+BinSuffix, std::ios::out|std::ios::binary|std::ios::app );
+    tempCopyWrite.open(copyFileName, std::ios::in | std::ios::binary);
+    fileData.open(base_path + BinSuffix, std::ios::out | std::ios::binary | std::ios::app);
 
-    tempCopyWrite>>printPtr;
-    while(printPtr.nextRow != -1){
-        fileData<<printPtr;
-        tempCopyWrite>>printRecord>>printPtr;
-        fileData<<printRecord;
+    tempCopyWrite >> printPtr;
+    while (printPtr.nextRow != -1)
+    {
+        fileData << printPtr;
+        tempCopyWrite >> printRecord >> printPtr;
+        fileData << printRecord;
     }
-    fileData<<printPtr;
+    fileData << printPtr;
 
     tempCopyWrite.close();
     fileData.close();
 
     std::remove(copyFileName.c_str());
-    fileAux.open(base_path+AuxSuffix, std::ios::trunc|std::ios::out);
+    fileAux.open(base_path + AuxSuffix, std::ios::trunc | std::ios::out);
     fileAux.close();
 }
 
@@ -302,7 +321,8 @@ std::vector<Record> SequentialFile<Record>::rangeSearch(Key_t begin_key, Key_t e
                 if (row_group[i] == key_group[i])
                 {
                     fileAux >> label_group[i];
-                    if(label_group[i].nextRow != 0) break;
+                    if (label_group[i].nextRow != 0)
+                        break;
                 }
                 else
                     fileAux.ignore(sizeof(NextLabel));
@@ -358,13 +378,16 @@ Record SequentialFile<Record>::search(Key_t key)
             l = m + 1;
         else if (objective < result)
             r = m - 1;
-        else{
-            file>>removeChecker;
-            break;}
+        else
+        {
+            file >> removeChecker;
+            break;
+        }
     }
     file.close();
 
-    if(l <= r && removeChecker.nextRow != 0) return result;
+    if (l <= r && removeChecker.nextRow != 0)
+        return result;
 
     file.open(base_path + AuxSuffix, std::ios::in | std::ios::binary);
 
@@ -386,7 +409,8 @@ Record SequentialFile<Record>::search(Key_t key)
 template <typename Record>
 void SequentialFile<Record>::add(Record reg)
 {
-    if(sizeAux >= K_max_aux) reorganize();
+    if (sizeAux >= K_max_aux)
+        reorganize();
 
     std::fstream fileAux(base_path + AuxSuffix, std::ios::in | std::ios::out | std::ios::binary);
     std::fstream fileData(base_path + BinSuffix, std::ios::in | std::ios::out | std::ios::binary);
@@ -514,7 +538,7 @@ SequentialFile<Record>::SequentialFile(std::string _base_path)
     const std::string binaryDB = base_path + BinSuffix, auxDB = base_path + AuxSuffix;
     std::fstream fCreate(auxDB, std::ios::in | std::ios::out | std::ios::app);
     fCreate.seekg(0, std::ios::end);
-    sizeAux = fCreate.tellg()/row_sizeof;
+    sizeAux = fCreate.tellg() / row_sizeof;
     fCreate.close();
     fCreate.open(binaryDB, std::ios::in | std::ios::out | std::ios::app);
     fCreate.seekp(0, std::ios::end);
@@ -528,7 +552,7 @@ SequentialFile<Record>::SequentialFile(std::string _base_path)
 
     fCreate.open(binaryDB, std::ios::in | std::ios::binary);
     fCreate.seekg(0, std::ios::end);
-    sizeData = (fCreate.tellg()-sizeof(NextLabel))/row_sizeof;
+    sizeData = (fCreate.tellg() - sizeof(NextLabel)) / row_sizeof;
     K_max_aux = static_cast<int>(log2(sizeData) / row_sizeof))+1;
     fCreate.close();
 }

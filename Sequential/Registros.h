@@ -29,8 +29,9 @@ struct Registros::Cereal
 };
 
 Registros::Cereal::Cereal(std::string _id, char _attr1, int _attr2, int _attr3)
-    :mfr(_attr1), type('f'),calories(_attr2), protein(_attr3), fat(3), sodium(2), fiber(12), carbo(32), sugars(1), potass(4), vitamins(7), shelf(0), weight(34.5), cups(89.3), rating(3.1){
-        int length = _id.copy(id, max_name_len);
+    : mfr(_attr1), type('f'), calories(_attr2), protein(_attr3), fat(3), sodium(2), fiber(12), carbo(32), sugars(1), potass(4), vitamins(7), shelf(0), weight(34.5), cups(89.3), rating(3.1)
+{
+    int length = _id.copy(id, max_name_len);
     id[length] = '\0';
 }
 
