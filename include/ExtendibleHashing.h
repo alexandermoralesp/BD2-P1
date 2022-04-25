@@ -78,7 +78,6 @@ public:
     void insert(const KeyType& key, const Record<KeyType>& record);
     void remove(const KeyType& key);
     Record<KeyType>* find(const KeyType& key);
-    void print();
 };
 
 template <typename KeyType>
