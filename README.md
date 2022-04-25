@@ -10,7 +10,7 @@
 |---------------------------|------------------|-----------------|
 | Morales Panitz, Alexander | 202020195        | 100%            |
 | Ugarte Quispe, Grover     | 202020195        | 100%            |
-| Gutierrez, Luis           | 202020195        | 100%            |
+| Gutierrez Guanilo, Luis   | 202010074        | 100%            |
 
 ## Introducción
 
