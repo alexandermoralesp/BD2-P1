@@ -30,7 +30,8 @@ struct BucketInterface {
 
 struct BucketIndex : public BucketInterface {
     bool isLeaf{};
-    // child0 when BucketIndex is leaf correspond the position of the key in the bucket
+    // Cuando el BucketIndex es una hoja, la posicion del BucketRecords es child0 por defecto. (Implementación
+    // basda en un árbol binario de búsqueda
     long child0;
     long child1;
     int depth;
