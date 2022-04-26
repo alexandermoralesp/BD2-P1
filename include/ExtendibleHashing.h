@@ -1,6 +1,7 @@
 #ifndef EXTENDIBLEHASHING_H
 #define EXTENDIBLEHASHING_H
 
+/* Include dependencies */
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
@@ -8,31 +9,53 @@
 #include <string>
 #include <exception>
 #include <vector>
+#include <bitset>
 
+/* Declarations */
+
+/**
+ * Record
+ * @tparam KeyType - type of key value
+ */
 template<typename KeyType>
 struct Record;
 
-template<typename KeyType>
-struct Record {
-    long position;
-    KeyType key;
-    Record(long pos, KeyType k) : position(pos), key(k) {}
-};
-
+/**
+ * ExtendibleHashing
+ * @tparam KeyType - type of key value
+ * @tparam fb - factor of block
+ */
 template<typename KeyType, int fb>
 class ExtendibleHashing;
 
+
+/* Implementations */
+
+// Record of data
+template<typename KeyType>
+struct Record {
+    /* Attributes */
+    long position;
+    KeyType key;
+
+    /* Methods */
+    Record(long pos, KeyType k) : position(pos), key(k) {}
+};
+
 struct BucketIndex {
-    bool isLeaf{};
+    /* Attributes */
+    bool isLeaf;
     // child0 when BucketIndex is leaf correspond the position of the key in the bucket
     long child0;
     long child1;
     int depth;
     int bit;
 
+    /* Methods */
     BucketIndex(int bit, int depth) : bit(bit) {
-        child0 = -1;
-        child1 = -1;
+        this->child0 = -1;
+        this->child1 = -1;
+        this->isLeaf = 0;
         this->depth = depth;
     };
     // show BucketIndex
@@ -44,19 +67,19 @@ struct BucketIndex {
 
 template<typename KeyType, int fb>
 struct BucketRecord {
-    bool disable;
+
+    /* Attributes */
+    bool disable; // Disable for deletions
     int size;
     long next_bucket;
     KeyType records[fb];
     long positions[fb];
 
+    /* Methods */
     BucketRecord() : size(0), next_bucket(-1), disable(0) {};
-    ~BucketRecord() {
-    }
+    ~BucketRecord() = default;
     void insert(KeyType key, long value);
-
     void remove(KeyType key);
-
     long find(KeyType key);
     int get_size() {
         return sizeof(disable) + sizeof(size) + sizeof(next_bucket) + sizeof(KeyType)*fb + sizeof(long)*fb;
@@ -119,47 +142,67 @@ template<typename KeyType, int fb>
 ExtendibleHashing<KeyType, fb>::~ExtendibleHashing() {
 }
 
+size_t get_size_of_index_file(std::string indexFileName) {
+    std::ofstream file(indexFileName, std::ios::in | std::ios::out | std::ios::binary);
+    if (!file.is_open()) throw std::runtime_error("Cannot open index file");
+    file.seekp(0, std::ios::end);
+    size_t size_file = file.tellp();
+    file.close();
+    return size_file;
+}
+
+std::string get_hash_code(const KeyType& key) {
+    size_t hash_value = hash_fn(key);
+    std::string hash_code = std::bitset<depth>(hash_value).to_string();
+    return hash_code;
+}
+
+bool initialize_index_and_records_binary_files(std::string indexFileName, std::string bucketFileName) {
+    BucketIndex root(-1, 0);
+    root.child0 = 1;
+    root.child1 = 2;
+    BucketIndex child0(0, 1);
+    child0.isLeaf = true;
+    BucketIndex child1(1, 1);
+    child1.isLeaf = true;
+    child0.child0 = 1;
+    child1.child0 = 2;
+    std::ofstream indexFileWrite;
+    indexFileWrite.open(indexFileName, std::ios::in | std::ios::out | std::ios::binary);
+    if (!indexFileWrite.is_open()) throw std::runtime_error("Cannot open index file");
+    indexFileWrite.write((char *) &root, sizeof(BucketIndex));
+    indexFileWrite.write((char *) &child0, sizeof(BucketIndex));
+    indexFileWrite.write((char *) &child1, sizeof(BucketIndex));
+    indexFileWrite.close();
+    std::ofstream bucketFileRecord(bucketFileName, std::ios::in | std::ios::out | std::ios::binary);
+    if (!bucketFileRecord.is_open()) throw std::runtime_error("Cannot open bucket file");
+    BucketRecord<KeyType, fb> bucketRecord0;
+    BucketRecord<KeyType, fb> bucketRecord1;
+    bucketFileRecord.write((char *) &bucketRecord0, sizeof(bucketRecord0.get_size()));
+    bucketFileRecord.write((char *) &bucketRecord1, sizeof(bucketRecord1.get_size()));
+    bucketFileRecord.close();
+}
+
+BucketIndex read_root_bucketindex(std::string indexFileName) {
+  std::ifstream indexFileRead(indexFileName, std::ios::in | std::ios::out | std::ios::binary);
+  BucketIndex current(-1, depth);
+  indexFileRead.read((char *) &current, sizeof(BucketIndex));
+  indexFileRead.close();
+}
+
 template<typename KeyType, int fb>
 void ExtendibleHashing<KeyType, fb>::insert(const KeyType &key, const Record<KeyType> &record) {
-    auto hash_code = hash_fn(key) % (1 << depth);
-    std::ofstream indexFileWrite(indexFileName, std::ios::in | std::ios::out | std::ios::binary);
+    // Get hash code
+    std::string hash_code = get_hash_code(key);
+    // Get size of index file
+    size_t size_file = get_size_of_index_file(indexFileName);
 
-    if (!indexFileWrite.is_open()) throw std::runtime_error("Cannot open index file");
-    indexFileWrite.seekp(0, std::ios::end);
-    size_t size_file = indexFileWrite.tellp();
-    indexFileWrite.close();
     if (size_file == 0) {
-        BucketIndex root(-1, 0);
-        root.child0 = 1;
-        root.child1 = 2;
-        BucketIndex child0(0, 1);
-        child0.isLeaf = true;
-        BucketIndex child1(1, 1);
-        child1.isLeaf = true;
-
-        child0.child0 = 1;
-        child1.child0 = 2;
-
-        indexFileWrite.open(indexFileName, std::ios::in | std::ios::out | std::ios::binary);
-        indexFileWrite.write((char *) &root, sizeof(BucketIndex));
-        indexFileWrite.write((char *) &child0, sizeof(BucketIndex));
-        indexFileWrite.write((char *) &child1, sizeof(BucketIndex));
-        indexFileWrite.close();
-
-        std::ofstream bucketFileRecord(bucketFileName, std::ios::in | std::ios::out | std::ios::binary);
-        if (!bucketFileRecord.is_open()) throw std::runtime_error("Cannot open bucket file1");
-        BucketRecord<KeyType, fb> bucketRecord0;
-        BucketRecord<KeyType, fb> bucketRecord1;
-        bucketFileRecord.write((char *) &bucketRecord0, sizeof(bucketRecord0.get_size()));
-        bucketFileRecord.write((char *) &bucketRecord1, sizeof(bucketRecord1.get_size()));
-        bucketFileRecord.close();
+      initialize_index_and_records_binary_files(indexFileName, bucketFileName);
     }
 
-    std::ifstream indexFileRead(indexFileName, std::ios::in | std::ios::out | std::ios::binary);
-    BucketIndex current(-1, depth);
-    indexFileRead.read((char *) &current, sizeof(BucketIndex));
-    indexFileRead.close();
-
+    BucketIndex current = read_root_bucketindex(indexFileName);
+    
     int i = 0;
     long current_position = 0;
     while (!current.isLeaf && i < depth) {
