@@ -20,9 +20,6 @@ Con el motivo de demostrar un buen funcionamiento de las implementaciones, se de
 
 Posteriormente a lo mencionado, los datos serán alterados por medio de operaciones CRUD tales como: actualizar, eliminar, insertar, búsqueda singular y búsqueda por rango. Por motivos experimentales, se ha toma en cuenta el tiempo tomado en alguna operación y su cantidad de accesos a memoria secundaria con la finalidad de evaluar en que casos algún método de organización es más efectivo.
 
-
-
-
 ## Fundamentación de técnicas de organización de archivos
 
 ## Resultados experimentales
