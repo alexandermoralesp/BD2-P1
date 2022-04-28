@@ -9,9 +9,13 @@
 //      FIFA22_PlayerCards_Format.csv -> FIFA22_PlayerCards_Format
 
 // insert: (line) Introducir los parametros del registro en una linea csv
+    // Se es exitoso, se retorna un 1, de lo contrario un 0
 // search:  (key) una cadena de la llave de un regsitro a hallar
+    // Se retorna una cadena en formato csv
 // remove: ('') ''
+    // Se es exitoso, se retorna un 1, de lo contrario un 0
 // rangeSearch (inicio) llave con la que se comienza la busqueda, (fin) llave con la que termina la busqueda
+    // Se retorna una cadena con los registros en formato csv, de tal manera que entre cada registro hay un \n
 namespace menuSequential
 {
     bool insert(std::string line, std::string nombre_csv_sin_ext);
