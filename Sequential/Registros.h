@@ -30,7 +30,14 @@ struct Registros::CartaFifa
     bool operator!=(Registros::CartaFifa c);
     bool operator<(Registros::CartaFifa c);
     bool operator>(Registros::CartaFifa c);
+    std::string writeCSVLine();
 };
+
+std::string Registros::CartaFifa::writeCSVLine(){
+    char result[100];
+    sprintf(result, "%s,%c,%s,%c,%c,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", id, foot, position, awr, dwr, ovr, pac, sho, pas, dri, def, phy, sm, div, pos, han, ref, kic, spd);
+    return std::string(result);
+}
 
 Registros::CartaFifa::CartaFifa(std::string _id, char _attr1, int _attr2, int _attr3)
     : foot(_attr1), ovr(_attr2), sm(_attr3)
