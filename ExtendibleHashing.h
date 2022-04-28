@@ -314,7 +314,7 @@ Record<KeyType> ExtendibleHashing<KeyType, FactorBlock, depth>::search(KeyType k
   {
     for (int i = 0; i < bucket_record.size; i++)
     {
-      if (bucket_record.keys[i] == key)
+      if (bucket_record.keys[i] == key && bucket_record.positions[i] != -1)
       {
         Record<KeyType> record;
         record.key = key;
@@ -322,7 +322,8 @@ Record<KeyType> ExtendibleHashing<KeyType, FactorBlock, depth>::search(KeyType k
         return record;
       }
     }
-    if (bucket_record.next == -1) break;
+    if (bucket_record.next == -1)
+      break;
     record_position = bucket_record.next;
     bucket_record.readFromFile(record_position, records_filename);
   } while (record_position != -1);
@@ -332,7 +333,49 @@ Record<KeyType> ExtendibleHashing<KeyType, FactorBlock, depth>::search(KeyType k
 template <typename KeyType, int FactorBlock, int depth>
 bool ExtendibleHashing<KeyType, FactorBlock, depth>::remove(KeyType key)
 {
-  return true;
+  size_t index_file = get_size_of_file(index_filename);
+  if (!index_file)
+    throw std::runtime_error("Index file is empty");
+  std::string hash_code = get_hash_code(key);
+  BucketIndex current;
+  current.readFromFile(0, index_filename);
+  int i = 0;
+  long current_position = 0;
+  while (!current.isLeaf && i < depth)
+  {
+    if (hash_code[i] == '1')
+    {
+      current_position = current.one;
+      current.readFromFile(current_position, index_filename);
+    }
+    else
+    {
+      current_position = current.zero;
+      current.readFromFile(current_position, index_filename);
+    }
+    i++;
+  }
+  long record_position = current.zero;
+  BucketRecord<KeyType, FactorBlock> bucket_record;
+  bucket_record.readFromFile(record_position, records_filename);
+  if (bucket_record.size == 0) return true;
+  do
+  {
+    for (int i = 0; i < bucket_record.size; i++)
+    {
+      if (bucket_record.keys[i] == key)
+      {
+        bucket_record.remove(key);
+        bucket_record.writeToFile(record_position, records_filename);
+        return true;
+      }
+    }
+    if (bucket_record.next == -1)
+      break;
+    record_position = bucket_record.next;
+    bucket_record.readFromFile(record_position, records_filename);
+  } while (record_position != -1);
+  return false;
 }
 
 #endif
