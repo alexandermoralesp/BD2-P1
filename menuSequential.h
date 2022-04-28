@@ -8,6 +8,10 @@
 //      cereal.csv -> cereal
 //      FIFA22_PlayerCards_Format.csv -> FIFA22_PlayerCards_Format
 
+// insert: (line) Introducir los parametros del registro en una linea csv
+// search:  (key) una cadena de la llave de un regsitro a hallar
+// remove: ('') ''
+// rangeSearch (inicio) llave con la que se comienza la busqueda, (fin) llave con la que termina la busqueda
 namespace menuSequential
 {
     bool insert(std::string line, std::string nombre_csv_sin_ext);
