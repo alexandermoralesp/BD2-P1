@@ -203,7 +203,7 @@ void SequentialFile<Record>::reorganize()
 {
     sizeData += sizeAux;
     sizeAux = 0;
-    K_max_aux = static_cast<int>(log2(sizeData) / row_sizeof))+1;
+    K_max_aux = static_cast<int>(log2(sizeData))+1;
 
     std::fstream fileData(base_path + BinSuffix, std::ios::in | std::ios::binary);
     std::fstream fileAux(base_path + AuxSuffix, std::ios::in | std::ios::binary);
@@ -553,7 +553,7 @@ SequentialFile<Record>::SequentialFile(std::string _base_path)
     fCreate.open(binaryDB, std::ios::in | std::ios::binary);
     fCreate.seekg(0, std::ios::end);
     sizeData = (fCreate.tellg() - sizeof(NextLabel)) / row_sizeof;
-    K_max_aux = static_cast<int>(log2(sizeData) / row_sizeof))+1;
+    K_max_aux = static_cast<int>(log2(sizeData))+1;
     fCreate.close();
 }
 

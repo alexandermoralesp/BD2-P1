@@ -3,13 +3,103 @@
 
 #include <string>
 #include <cstdio>
+#include <iostream>
 
 namespace Registros
 {
     struct Cereal;
+    struct CartaFifa;
 }
 
 const int max_name_len = 50;
+const int max_player_name = 40;
+
+struct Registros::CartaFifa
+{
+    CartaFifa() = default;
+    CartaFifa(std::string key);
+    CartaFifa(std::string _id, char _attr1, int _attr2, int _attr3);
+    CartaFifa(std::string _id, char _foot, std::string _position, char _awr, char _dwr, int ovr, int pac, int sho, int pas, int dri, int def, int phy, int sm, int div, int pos, int han, int ref, int kic, int spd);
+    char id[max_player_name]; // PlayerName,
+    char foot;
+    char position[4];
+    char awr, dwr;
+    int ovr, pac, sho, pas, dri, def, phy, sm, div, pos, han, ref, kic, spd;
+    void readCSVLine(std::string st);
+    bool operator==(Registros::CartaFifa c);
+    bool operator!=(Registros::CartaFifa c);
+    bool operator<(Registros::CartaFifa c);
+    bool operator>(Registros::CartaFifa c);
+};
+
+Registros::CartaFifa::CartaFifa(std::string _id, char _attr1, int _attr2, int _attr3)
+    : foot(_attr1), ovr(_attr2), sm(_attr3)
+{
+    int length = _id.copy(id, max_player_name);
+    id[length] = '\0';
+}
+
+Registros::CartaFifa::CartaFifa(std::string _id, char _foot, std::string _position, char _awr, char _dwr, int _ovr, int _pac, int _sho, int _pas, int _dri, int _def, int _phy, int _sm, int _div, int _pos, int _han, int _ref, int _kic, int _spd)
+    :  foot(_foot),  awr(_awr), dwr(_dwr), ovr(_ovr), pac(_pac), sho(_sho), pas(_pas), dri(_dri), def(_def), phy(_phy),  sm(_sm), div(_div), pos(_pos),  han(_han),  ref(_ref), kic(_kic), spd(_spd)
+{
+    int length = _id.copy(id, max_player_name);
+    id[length] = '\0';
+    length = _position.copy(position, 4);
+    id[length] = '\0';
+}
+
+Registros::CartaFifa::CartaFifa(std::string key)
+{
+    int length = key.copy(id, max_player_name);
+    id[length] = '\0';
+}
+
+std::istream &operator>>(std::istream &is, Registros::CartaFifa &c)
+{
+    is.read((char *)&c, sizeof(Registros::CartaFifa));
+    return is;
+}
+
+std::ostream &operator<<(std::ostream &os, Registros::CartaFifa c)
+{
+    os.write((char *)&c, sizeof(Registros::CartaFifa));
+    return os;
+}
+
+bool Registros::CartaFifa::operator>(Registros::CartaFifa c)
+{
+    return !(std::string(id) == std::string(c.id) || std::string(id) < std::string(c.id));
+}
+
+bool Registros::CartaFifa::operator==(Registros::CartaFifa c)
+{
+    return std::string(id) == std::string(c.id);
+}
+
+bool Registros::CartaFifa::operator!=(Registros::CartaFifa c)
+{
+    return !(std::string(id) == std::string(c.id));
+}
+
+bool Registros::CartaFifa::operator<(Registros::CartaFifa c)
+{
+    int thislen = std::string(id).size(), clen = std::string(c.id).size();
+    int minlen = (thislen < clen ? thislen : clen);
+    for (int i = 0; i < minlen; i++)
+    {
+        if (id[i] < c.id[i])
+            return true;
+        else if (id[i] > c.id[i])
+            return false;
+    }
+
+    return thislen < clen;
+}
+
+void Registros::CartaFifa::readCSVLine(std::string st)
+{
+    sscanf(st.c_str(), "%[^,],%c,%[^,],%c,%c,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", id, &foot, position, &awr, &dwr, &ovr, &pac, &sho, &pas, &dri, &def, &phy, &sm, &div, &pos, &han, &ref, &kic, &spd);
+}
 
 struct Registros::Cereal
 {
