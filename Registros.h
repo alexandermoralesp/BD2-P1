@@ -1,15 +1,73 @@
 #ifndef REGISTROS_H
 #define REGISTROS_H
 
+#include <iostream>
 #include <string>
 #include <cstdio>
+#include <fstream>
 
 namespace Registros
 {
     struct Cereal;
+    struct Titanic;
 }
 
 const int max_name_len = 50;
+
+struct Registros::Titanic {
+    int passenger_id;
+    int pclass;
+    char name[max_name_len];
+    char sex[8];
+    int age;
+    int sibsp;
+    int parch;
+    char ticket[max_name_len];
+    int fare;
+    char cabin[max_name_len];
+    char embarked;
+    Titanic(int passenger_id, int pclass, std::string name, std::string sex, int age, int sibsp, int parch, std::string ticket, int fare, std::string cabin, char embarke);
+    Titanic(int passenger_id);
+    void readCSVLine(std::string st);
+};
+
+Registros::Titanic::Titanic(int passenger_id, int pclass, std::string name, std::string sex, int age, int sibsp, int parch, std::string ticket, int fare, std::string cabin, char embarked) {
+    this->passenger_id = passenger_id;
+    this->pclass = pclass;
+    int l1 = name.copy(this->name, max_name_len);
+    this->name[l1] = '\0';
+    int l2 = sex.copy(this->sex, 5);
+    this->sex[l2] = '\0';
+    this->age = age;
+    this->sibsp = sibsp;
+    this->parch = parch;
+    int l3 =ticket.copy(this->ticket, max_name_len);
+    this->fare = fare;
+    int l4 =cabin.copy(this->cabin, max_name_len);
+    this->embarked = embarked;
+}
+
+Registros::Titanic::Titanic(int passenger_id) {
+    this->passenger_id = passenger_id;
+}
+
+std::ifstream &operator>>(std::ifstream &is, Registros::Titanic &t) {
+    is.read((char*)&t, sizeof(Registros::Titanic));
+    return is;
+}
+
+std::ostream &operator<<(std::ostream &os, Registros::Titanic c)
+{
+    os.write((char *)&c, sizeof(Registros::Titanic));
+    return os;
+}
+
+void Registros::Titanic::readCSVLine(std::string st)
+{
+    sscanf(st.c_str(), "%d,%d,%[^,],%[^,],%d,%d,%d,%[^,],%d,%[^,],%c", &this->passenger_id, &this->pclass, &this->name, &this->sex, &this->age, &this->sibsp, &this->parch, &this->ticket, &this->fare, &this->cabin, &this->embarked);
+}
+
+/* Cereal */
 
 struct Registros::Cereal
 {
