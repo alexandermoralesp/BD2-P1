@@ -89,4 +89,13 @@ Esta técnica de indexación consiste en guardar los registros en un archivo de 
 
 ## Resultados experimentales
 
+Para tomar las métricas de accesos a memoria secundaria y el tiempo tomado para cada instrucción, se toma en cuenta lo siguiente:
+
+- Para el tiempo, se empleará la librería de c++ chrono
+- Para la cantidad de accesos a memoria secundaria, se agregara un contador que incrementará cuando suceda lo siguiente:
+	- Un archivo es abierto
+	- Existe una lectura o escritura
+	- Nos posicionamos en una ubicación del archivo	
+
+
 ## Pruebas de uso
