@@ -41,9 +41,32 @@ Esta técnica de indexación consiste en guardar los registros en un archivo de 
 
 #### Remover
 
+- Si la cantidad de registros eliminado en el archivo auxiliar es igual a lo máximo definida, se reorganiza el archivo
+- Aplicamos el algoritmo de búsqueda para hallar el registro y puntero que coincidan con la llave introducida en la función.
+	- Si no es hallada, se retorna una excepción
+- Ya que los punteros también se encuentran ordenados (a excepción del archivo auxiliar), realizamos una búsqueda para hallar el registro y puntero que apunten a la posición de aquel registro y coincidan con su indicador de archivo.
+	- Ambos archivos deben ser abiertos de tal forma que acepten lectura y sobreescritura
+	- Antes de iniciar todo el algoritmo de búsqueda, podemos evitarlo si leemos la cabecera y comprobamos si esta apunta al registro
+- Una vez encontrado, se clona el puntero previo en una variable temporal
+- Se retrocede en el tamaño del puntero y se sobrescribe su puntero con el puntero que colinda con el registro a eliminar
+- Utilizando el puntero copia, regresamos a la posición del registro objetivo, ignoramos todo su bloque de información y sobrescribimos el puntero con uno que apunte a la posición 0
+
 #### Buscar
 
+- Abrimos el archivo principal  en modo lectura y realizamos una búsqueda binaria entre sus registros, leyendo también el puntero que lo acompaña.
+- Si no se encuentra un registro que contenga la llave o si su puntero apunta a 0 (lo que significa que ese registro fue eliminado), abrimos el archivo auxiliar en modo lectura y realizamos una búsqueda lineal, asegurándonos que el puntero que lo acompañe no sea 0.
+- Si luego de examinar el archivo auxiliar no se encontró una coincidencia o el puntero nos dice que el registro está eliminado, retornamos una excepción de que no se halló un registro con esa llave. En caso contrario, se retorna el registro.
+
 #### Buscar por rango
+
+- Aplicamos el algoritmo de búsqueda mencionado anteriormente para las llaves de inicio y fin del rango (leyendo tanto el registro y el puntero)
+	- Si no se encontró el registro, se retorna una excepción
+- Creamos un vector de registros y agregamos el registro con la llave de inicio
+- Realizamos lecturas de registros y punteros hasta que estos coincidan con las lecturas asociadas a la llave final
+	- Dependiendo del carácter del puntero, nos posicionamos en la dirección que apunta en el archivo respectivo
+	- Realizamos una lectura de registro y puntero
+	- Agregamos el registro al vector de registros
+- Se retorna el vector de registros que se encuentren inclusivamente en el rango introducido
 
 #### Reorganizar (Adicional)
 
@@ -55,10 +78,13 @@ Esta técnica de indexación consiste en guardar los registros en un archivo de 
 	- Escribir el puntero y el registro leído actual 
 	- Leemos el registro que acompaña el registro
 	- Mientras el registro no direccione a -1, repetimos lo anterior
-- Escribimos el registro que apunta a -1
+- Escribimos el registro que apunta a -1 al final del archivo ya que este no es escrito en el bucle
 - Truncamos ambos archivos
 - Nos dirigimos al archivo de datos y copiamos todos los datos del archivo temporal creado
 - Eliminamos el archivo temporal
+
+#### Consideraciones 
+- Ya que al realizar una búsqueda binaria nos enfocamos en una complejidad logarítmica, con el objetivo de que a lo mucho se duplique el tiempo, la cantidad de registros eliminados y presentes en el archivo auxiliar no deben sobrepasar $\lg(n)+1$. Siendo $n$ la cantidad de registros en el archivo principal.
 
 
 ## Resultados experimentales
