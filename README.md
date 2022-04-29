@@ -222,7 +222,28 @@ Las metricas en una búsqueda por rango de un hash serán 0 ya que esto no es so
 
 #### Dataset Cereales
 
+| Cereal (N_Registros_Inicial = 77)                             |               | Sequential   |         | Hash         |         |
+|---------------------------------------------------------------|---------------|--------------|---------|--------------|---------|
+| Instrucción - Que se hace                                     | N Instruccion | Nanosegundos | Accesos | Nanosegundos | Accesos |
+| Busqueda Cocoa Puffs                                          | 1             | 37900        | 15      | 7243000      | 10      |
+| Insercion Crispy Wheat & Raisins0                             | 2             | 60600        | 29      | 15740000     | 15      |
+| Insercion Crispy Wheat & Raisins1                             | 3             | 51500        | 31      | 14986000     | 14      |
+| Insercion Crispy Wheat & Raisins2                             | 4             | 57800        | 33      | 15984000     | 12      |
+| Insercion Crispy Wheat & Raisins3                             | 5             | 31400        | 35      | 14987000     | 15      |
+| Insercion Crispy Wheat & Raisins4                             | 6             | 74000        | 37      | 13803000     | 14      |
+| Insercion Crispy Wheat & Raisins5                             | 7             | 105000       | 39      | 15004000     | 10      |
+| Insercion Crispy Wheat & Raisins6                             | 8             | 105700       | 41      | 14001000     | 15      |
+| Insercion Crispy Wheat & Raisins7                             | 9             | 225000       | 543     | 13937000     | 12      |
+| Insercion Crispy Wheat & Raisins8                             | 10            | 25900        | 31      | 14986000     | 10      |
+| Insercion Crispy Wheat & Raisins9                             | 11            | 41600        | 33      | 14014000     | 16      |
+| Insercion Crispy Wheat & Raisins10                            | 12            | 48500        | 32      | 12993000     | 14      |
+| Busqueda Crispy Wheat & Raisins9                              | 13            | 57100        | 25      | 14962000     | 11      |
+| Busqueda de rango entre Cream of Wheat (Quick) y Froot Loops" | 14            | 56100        | 52      | 1            | 1       |
+| Eliminacion "Cocoa Puffs"                                     | 15            | 37300        | 27      | 2993000      | 6       |
 
+![](IMG/ceerealTiempo.png)
+
+![](IMG/cerealAcceso.png)
 
 #### Dataset FIFA
 
@@ -256,6 +277,7 @@ Las metricas en una búsqueda por rango de un hash serán 0 ya que esto no es so
 | Eliminacion Pele                                           | 25            | 85000        | 67      | 3531000      | 6       |
 	
 ![](IMG/fifagrafico.png)
+
 ![](IMG/fifagraficoaccess.png)
 
 ### Análisis e interpretación
