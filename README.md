@@ -91,6 +91,93 @@ Esta técnica de indexación consiste en guardar los registros en un archivo de 
 #### Consideraciones 
 - Ya que al realizar una búsqueda binaria nos enfocamos en una complejidad logarítmica, con el objetivo de que a lo mucho se duplique el tiempo, la cantidad de registros eliminados y presentes en el archivo auxiliar no deben sobrepasar $\lg(n)+1$. Siendo $n$ la cantidad de registros en el archivo principal.
 
+### Hash Dinámico (Extendible Hashing)
+
+Esta técnica de indexación consiste en organizar los registros en un árbol binario  de búsqueda en la que los nodos hojas (Bucket Records) almacenan las posición de el registro en el **archivo de datos**. La **función hash** convierte el valor de ID del registro a una cadena de bits para que posteriormente sea localizada en base a los bits. 
+
+Los parámetros del Hash Dinámicos son:
+
+**Depth:** Profundidad máxima del árbol <br>
+**Factor block:** Cantidad máxima de elementos que puede tener un *bucket record*
+
+Si es que en la inserción la profundidad del árbol supera la extensión máxima (depth), se procede a construir nuevos buckets records como lista enlazada. En este contexto, la estructura *bucket record* tiene un puntero a la siguiente posición en el archivo (Bucket_record->next), la cual cumple con la función de redirección para la búsqueda o inserción.
+
+```
+Para todos los casos, antes de cada operación se realiza la verificación de la existencia del archivo de datos. Sino, se procede a construir.
+```
+```
+NOTA: Si es nodo index hoja, la posicion del elemento 0 es la posición del bucket record en el buckets.records.dat
+
+               1
+        0           1
+        |           |  
+     posicion      -1
+        en
+        el
+      records
+
+```
+
+#### Insertar
+- Se realiza la operación de converción de la data bruta a la estructura.
+- Dicho registro para como parámetro en el Hash Dinámico.
+- Se realiza la operación hashing y módulo para obtener el hash code de la llave.
+- Recorrido de izquierda a derecha, verificando si el bucket index es hoja o no
+    - Si es hoja, insertar.
+    - Si no es hoja, se procede a crear el bucket record
+- Si al querer insertar el bloque ya está lleno, se procede a extender mediante una lista
+
+#### Remover
+- Se realiza la conversión de la data en bruto a la estructura record
+- Dicho registro para como parámetro en la función remover
+- Se obtiene le hash code en base a la llave del registro
+- Se realiza el recorridog de izquierda a derecha del hash code, en la que a la vez se verifica si es que el nodo es o no hoja.
+    - Si es nodo hoja, realizar la búsqueda del valor
+        - Si el valor se encuentra, se eliminar del bucket
+        - Si el valor **no** se encuentra, y no existe extensión, se retorna.
+        - Si existe extensión, se realiza el recorrido, y se repite dicho proceso
+
+
+#### Buscar
+- Se realiza la conversión de la data en bruto a la estructra de registro
+- Dicho registro para como parámetro en la función remover
+- Se obtiene le hash code en base a la llave del registro
+- Se realiza el recorridog de izquierda a derecha del hash code, en la que a la vez se verifica si es que el nodo es o no hoja.
+    - Si es nodo hoja, realizar la búsqueda del valor
+        - Si existe el valor retorna el registro
+        - Si el valor **no** se encuentra, y no existe extensión, se retorna.
+        - Si existe extensión, se realiza el recorrido, y se repite dicho proceso
+
+#### Consideraciones
+
+```
+NOTA: El Hash Dinámico no soporta búsqueda por rango.
+```
+
+#### Narración ejemplificada de instrucciones
+
+Caso de inserción:<br>
+- Insertamos como registro en formato csv (Registro: "Pele,R,CAM,H,M,98,95,96,93,96,60,76,5,-1,-1,-1,-1,-1,-1")
+- Se crea la estructura CartaFifa
+- Se lee la linea csv y se construye la estructura
+
+Caso de eliminación:
+- Se obtiene el id Pele
+- Se realiza la conversión hash obtieendo 100
+- Se realiza la busqueda 1->0->0
+    - Si es que en algún índice es leaf, para el recorrido
+    - Si sobrepasa el valor depth, para la recorridog
+- Se leer el bucket record
+- Se realiza la inserción de "Pele" en el bucket_records.dat, la cual almacena el id y el pos
+
+Caso de búsqueda:
+    - Se obtiene el id Pele
+    - Se realiza la conversión hash obteniendo 100
+    - Se realiza la búsqueda 1->0->0 hasta encontrar el índice hoja
+    - Se da lectura del bucket record según la posición
+        - Si es que existe el registro, retorna
+        - Si no, se hace una búsqueda en caso tenga extendible
+        - Si no encuentra, retorna que no existe el elemento
 
 ## Resultados experimentales
 
