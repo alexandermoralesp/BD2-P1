@@ -14,7 +14,7 @@ bool buildFifa() {
 }
 std::hash<std::string> hash_fn_str;
 
-bool insert(std::string record); // Like line in csv
+bool insert(std::string record, lons pos); // Like line in csv
 std::string search(std::string id); // Like id in csv
 bool remove(std::string id);
 
