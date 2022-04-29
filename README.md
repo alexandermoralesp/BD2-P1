@@ -294,18 +294,22 @@ La organización hash presenta una menor cantidad de accesos ya que la mayor par
 Para realizar pruebas de uso en nuestra aplicación creada, emplearemos un ensayo reducido al presentado en el apartado de ```Definición del plan de instrucciones a ejecutar```:
 
 - Dataset Cereal
-	1.  Búsqueda de la llave ```Cocoa Puffs```
-	2. Para i=0 hasta 2
-		- Insertar ```Crispy Wheat & Raisins + tostring(i),G,C,100,2,1,140,2,11,10,120,25,3,1,0.75,36.176196```
-	3. Búsqueda de la llave ```Crispy Wheat & Raisins9```
-	4. Búsqueda en rango desde la llave ```Cream of Wheat (Quick)``` hasta ```Froot Loops```
-	5. Eliminación de la llave ```Cocoa Puffs```
+	1.  Búsqueda de la llave: ```Cocoa Puffs```
+	2. Inserción de: ```Crispy Wheat & Raisins0,G,C,100,2,1,140,2,11,10,120,25,3,1,0.75,36.176196```
+	3. Inserción de: ```Crispy Wheat & Raisins1,G,C,100,2,1,140,2,11,10,120,25,3,1,0.75,36.176196```
+	4. Inserción de: ```Crispy Wheat & Raisins2,G,C,100,2,1,140,2,11,10,120,25,3,1,0.75,36.176196```
+	5. Búsqueda de la llave: ```Crispy Wheat & Raisins1```
+	6. Búsqueda en rango desde la llave: ```Cream of Wheat (Quick)``` hasta ```Froot Loops```
+	7. Eliminación de la llave: ```Cocoa Puffs```
+	8. Búsqueda en rango desde la llave: ```Cream of Wheat (Quick)``` hasta ```Froot Loops```
 
 - Dataset Fifa
-	1. Búsqueda de la llave ```Pele```
-	2. Para i=0 hasta 2
-		- Insertar ```Johan Cruyff + to_string(i),R,CF,H,L,94,91,92,91,94,42,73,5,-1,-1,-1,-1,-1,-1```
-	3. Búsqueda de la llave ``` Johan Cruyff 19```
-	4. Búsqueda en rango desde la llave ```Javier Zanetti``` hasta ```Joshua Kimmich```
-	5. Eliminación de la llave ```Pele```
+	1. Búsqueda de la llave: ```Pele```
+	2. Insertar: ```Johan Cruyff0,R,CF,H,L,94,91,92,91,94,42,73,5,-1,-1,-1,-1,-1,-1```
+	3. Insertar: ```Johan Cruyff1,R,CF,H,L,94,91,92,91,94,42,73,5,-1,-1,-1,-1,-1,-1```
+	4. Insertar: ```Johan Cruyff2,R,CF,H,L,94,91,92,91,94,42,73,5,-1,-1,-1,-1,-1,-1```
+	5. Búsqueda de la llave: ``` Johan Cruyff 1```
+	6. Búsqueda en rango desde la llave: ```Javier Zanetti``` hasta ```Joshua Kimmich```
+	7. Eliminación de la llave: ```Johan Cryuff```
+	8. Búsqueda en rango desde la llave: ```Javier Zanetti``` hasta ```Joshua Kimmich```
 
