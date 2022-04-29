@@ -198,7 +198,7 @@ Para tomar las métricas de accesos a memoria secundaria y el tiempo tomado para
 
 Adicionalmente, se definieron los siguientes pasos para evaluar las métricas por las instrucciones mencionadas:
 
-- Dataset Cereal
+- Dataset Cereal **(77 registros)**
 	1.  Búsqueda de la llave ```Cocoa Puffs```
 	2. Para i=0 hasta 10
 		- Insertar ```Crispy Wheat & Raisins + tostring(i),G,C,100,2,1,140,2,11,10,120,25,3,1,0.75,36.176196```
@@ -206,13 +206,17 @@ Adicionalmente, se definieron los siguientes pasos para evaluar las métricas po
 	4. Búsqueda en rango desde la llave ```Cream of Wheat (Quick)``` hasta ```Froot Loops```
 	5. Eliminación de la llave ```Cocoa Puffs```
 
-- Dataset Fifa
+- Dataset Fifa **(15418 registros)**
 	1. Búsqueda de la llave ```Pele```
 	2. Para i=0 hasta 20
 		- Insertar ```Johan Cruyff + to_string(i),R,CF,H,L,94,91,92,91,94,42,73,5,-1,-1,-1,-1,-1,-1```
 	3. Búsqueda de la llave ``` Johan Cruyff 19```
 	4. Búsqueda en rango desde la llave ```Javier Zanetti``` hasta ```Joshua Kimmich```
 	5. Eliminación de la llave ```Pele```
+
+```
+Las metricas en una búsqueda por rango de un hash serán 0 ya que esto no es soportado por la estructura.
+```
 
 ### Resultados y graficos
 
