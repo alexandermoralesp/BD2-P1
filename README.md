@@ -252,6 +252,7 @@ Adicionalmente, se definieron los siguientes pasos para evaluar las métricas po
 | Eliminacion Pele                                           | 25            | 85000        | 67      | 3531000      | 6       |
 	
 ![](IMG/fifagrafico.png)
+![](IMG/fifagraficoaccess.png)
 
 ### Análisis e interpretación
 
