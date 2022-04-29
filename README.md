@@ -216,8 +216,43 @@ Adicionalmente, se definieron los siguientes pasos para evaluar las métricas po
 
 ### Resultados y graficos
 
+#### Dataset Cereales
 
+
+
+#### Dataset FIFA
+
+| FIFA (N_Registros_Inicial = 15418)                         |               | Sequential   |         | Hash         |         |
+|------------------------------------------------------------|---------------|--------------|---------|--------------|---------|
+| Instrucción - Que se hace                                  | N Instruccion | Nanosegundos | Accesos | Nanosegundos | Accesos |
+| Busqueda Pele                                              | 1             | 48400        | 23      | 3954000      | 7       |
+| Insercion Johan Cruyff0                                    | 2             | 78800        | 43      | 2782000      | 8       |
+| Insercion Johan Cruyff1                                    | 3             | 39100        | 45      | 2994000      | 8       |
+| Insercion Johan Cruyff2                                    | 4             | 47200        | 47      | 3204000      | 9       |
+| Insercion Johan Cruyff3                                    | 5             | 35800        | 49      | 2552000      | 9       |
+| Insercion Johan Cruyff4                                    | 6             | 31600        | 51      | 2190000      | 9       |
+| Insercion Johan Cruyff5                                    | 7             | 47700        | 53      | 2990000      | 6       |
+| Insercion Johan Cruyff6                                    | 8             | 36000        | 55      | 1996000      | 10      |
+| Insercion Johan Cruyff7                                    | 9             | 31100        | 57      | 3298000      | 8       |
+| Insercion Johan Cruyff8                                    | 10            | 48700        | 59      | 1995000      | 9       |
+| Insercion Johan Cruyff9                                    | 11            | 37000        | 61      | 1994000      | 10      |
+| Insercion Johan Cruyff10                                   | 12            | 50400        | 55      | 1995000      | 10      |
+| Insercion Johan Cruyff11                                   | 13            | 37600        | 57      | 1995000      | 10      |
+| Insercion Johan Cruyff12                                   | 14            | 30400        | 59      | 2991000      | 10      |
+| Insercion Johan Cruyff13                                   | 15            | 49000        | 61      | 1995000      | 10      |
+| Insercion Johan Cruyff14                                   | 16            | 7024100      | 92621   | 1996000      | 8       |
+| Insercion Johan Cruyff15                                   | 17            | 61900        | 45      | 2992000      | 9       |
+| Insercion Johan Cruyff16                                   | 18            | 88000        | 47      | 2991000      | 10      |
+| Insercion Johan Cruyff17                                   | 19            | 78200        | 49      | 2993000      | 10      |
+| Insercion Johan Cruyff18                                   | 20            | 123600       | 51      | 2991000      | 11      |
+| Insercion Johan Cruyff19                                   | 21            | 74200        | 53      | 3018000      | 10      |
+| Insercion Johan Cruyff20                                   | 22            | 54200        | 49      | 2967000      | 6       |
+| Busqueda Johan Cruyff19                                    | 23            | 66900        | 42      | 1995000      | 14      |
+| Busqueda de rango entre Javier Zanetti y Joshua Kimmich``` | 24            | 1710000      | 2190    | 0            | 0       |
+| Eliminacion Pele                                           | 25            | 85000        | 67      | 3531000      | 6       |
 	
+![](IMG/fifagrafico.png)
+
 ### Análisis e interpretación
 
 ## Pruebas de uso
