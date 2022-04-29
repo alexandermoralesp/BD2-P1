@@ -89,7 +89,7 @@ Esta técnica de indexación consiste en guardar los registros en un archivo de 
 - Eliminamos el archivo temporal
 
 #### Consideraciones 
-- Ya que al realizar una búsqueda binaria nos enfocamos en una complejidad logarítmica, con el objetivo de que a lo mucho se duplique el tiempo, la cantidad de registros eliminados y presentes en el archivo auxiliar no deben sobrepasar <img src="https://render.githubusercontent.com/render/math?math=\lg(n) - (-1)">. Siendo <img src="https://render.githubusercontent.com/render/math?math=n"> la cantidad de registros en el archivo principal.
+- Ya que al realizar una búsqueda binaria nos enfocamos en una complejidad logarítmica, con el objetivo de que a lo mucho se duplique el tiempo, la cantidad de registros eliminados y presentes en el archivo auxiliar no deben sobrepasar <img src="https://render.githubusercontent.com/render/math?math=\color{white}\lg(n) - (-1)">. Siendo <img src="https://render.githubusercontent.com/render/math?math=n"> la cantidad de registros en el archivo principal.
 
 ### Hash Dinámico (Extendible Hashing)
 
@@ -284,7 +284,7 @@ Las metricas en una búsqueda por rango de un hash serán 0 ya que esto no es so
 
 Con respecto a los resultados de las métricas, debemos acotar que el valor de 1 en la búsqueda se asocia a la organización hash ya que esta organización no soporta la búsqueda por rango. Dejando aquello de lado, observamos que la organización secuencial es mucho más eficiente con respecto al tiempo en las 4 principales instrucciones. No obstante, la estructura hash tiene una menor cantidad de accesos que en la organización secuencial.
 
-En la instrucción 16 de inserción, observamos que la organización secuencial tiene picos en ambas variables, siendo evidentemente mayor que la lectura del hash extensible. Esto se debe a que el archivo auxiliar de registros llega a un tamaño de <img src="https://render.githubusercontent.com/render/math?math={\lg(n) - (-1)}">, es necesario reorganizar todos los registros, por lo que es necesario acceder a todo el archivo.  
+En la instrucción 16 de inserción, observamos que la organización secuencial tiene picos en ambas variables, siendo evidentemente mayor que la lectura del hash extensible. Esto se debe a que el archivo auxiliar de registros llega a un tamaño de <img src="https://render.githubusercontent.com/render/math?math={\color{white}\lg(n) - (-1)}">, es necesario reorganizar todos los registros, por lo que es necesario acceder a todo el archivo.  
 
 La organización hash presenta una menor cantidad de accesos ya que la mayor parte de la búsqueda y ubicación del lugar a insertar se realiza en la memoria principal. Mientras que el archivo secuencial necesita acceder a los registros cuando realiza una búsqueda binaria, la principal operación para cualquiera de sus instrucciones. Se debe resaltar que mientras más registros se presenten en la base de datos, los datos de acceso del archivo secuencial se distanciarán a mayor escala de las mediciones del archivo hash.
 
