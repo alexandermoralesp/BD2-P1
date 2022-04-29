@@ -26,7 +26,7 @@ Como se mencionó anteriormente, los medios de organización a utilizar fueron e
 
 ### Archivo Secuencial (Sequential File)
 
-Esta técnica de indexación consiste en guardar los registros en un archivo de tal forma que se les adiciona un indicador entero que nos otorga el orden del siguiente registro con un carácter que define el archivo (‘a’ o ‘d’). Aquel indicador es también agregado antes del primer registro para saber cual es el registro con menor llave. Este mismo formato de registro-puntero es empleado en un archivo auxiliar que nos permite agregar una cantidad determinada de registros con una complejidad constante, hasta que sea necesario reorganizar el archivo de datos principal. En cuanto a los valores de los punteros, se definen como: 0-eliminado, >0-siguiente registro y -1-ultimo registro.
+Esta técnica de indexación consiste en guardar los registros en un archivo de tal forma que se les adiciona un indicador entero que nos otorga el orden del siguiente registro con un carácter que define el archivo (‘a’ o ‘d’). Aquel indicador es también agregado antes del primer registro para saber cual es el registro con menor llave. Este mismo formato de registro-puntero es empleado en un archivo auxiliar que nos permite agregar una cantidad determinada de registros con una complejidad constante, hasta que sea necesario reorganizar el archivo de datos principal. En cuanto a los valores de los punteros, se definen como: eliminado (0), siguiente registro (>0) y ultimo registro (-1).
 
 #### Insertar
 
