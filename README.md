@@ -308,7 +308,7 @@ Para realizar pruebas de uso en nuestra aplicación creada, emplearemos un ensay
 	2. Insertar: ```Johan Cruyff0,R,CF,H,L,94,91,92,91,94,42,73,5,-1,-1,-1,-1,-1,-1```
 	3. Insertar: ```Johan Cruyff1,R,CF,H,L,94,91,92,91,94,42,73,5,-1,-1,-1,-1,-1,-1```
 	4. Insertar: ```Johan Cruyff2,R,CF,H,L,94,91,92,91,94,42,73,5,-1,-1,-1,-1,-1,-1```
-	5. Búsqueda de la llave: ``` Johan Cruyff 1```
+	5. Búsqueda de la llave: ``` Johan Cruyff1```
 	6. Búsqueda en rango desde la llave: ```Javier Zanetti``` hasta ```Joshua Kimmich```
 	7. Eliminación de la llave: ```Johan Cryuff```
 	8. Búsqueda en rango desde la llave: ```Javier Zanetti``` hasta ```Joshua Kimmich```
