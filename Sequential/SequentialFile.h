@@ -203,7 +203,7 @@ void SequentialFile<Record>::reorganize()
 {
     sizeData += sizeAux;
     sizeAux = 0;
-    K_max_aux = static_cast<int>(log2(sizeData))+1;
+    K_max_aux = static_cast<int>(log2(sizeData)) + 1;
 
     std::fstream fileData(base_path + BinSuffix, std::ios::in | std::ios::binary);
     std::fstream fileAux(base_path + AuxSuffix, std::ios::in | std::ios::binary);
@@ -280,6 +280,12 @@ template <typename Record>
 template <typename Key_t>
 std::vector<Record> SequentialFile<Record>::rangeSearch(Key_t begin_key, Key_t end_key)
 {
+    if (begin_key == end_key)
+    {
+        std::vector<Record> result;
+        result.push_back(search(begin_key));
+        return result;
+    }
     Record key_group[2] = {Record(begin_key), Record(end_key)};
 
     if (key_group[0] > key_group[1])
@@ -553,7 +559,7 @@ SequentialFile<Record>::SequentialFile(std::string _base_path)
     fCreate.open(binaryDB, std::ios::in | std::ios::binary);
     fCreate.seekg(0, std::ios::end);
     sizeData = (fCreate.tellg() - sizeof(NextLabel)) / row_sizeof;
-    K_max_aux = static_cast<int>(log2(sizeData))+1;
+    K_max_aux = static_cast<int>(log2(sizeData)) + 1;
     fCreate.close();
 }
 
