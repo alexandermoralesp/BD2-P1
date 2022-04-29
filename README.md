@@ -118,6 +118,8 @@ NOTA: Si es nodo index hoja, la posicion del elemento 0 es la posición del buck
 
 ```
 
+![](IMG/hach.png)
+
 #### Insertar
 - Se realiza la operación de converción de la data bruta a la estructura.
 - Dicho registro para como parámetro en el Hash Dinámico.
