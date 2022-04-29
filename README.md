@@ -126,6 +126,8 @@ Adicionalmente, se definieron los siguientes pasos para evaluar las métricas po
 	5. Eliminación de la llave ```Pele```
 
 ### Resultados y graficos
+
+
 	
 ### Análisis e interpretación
 
