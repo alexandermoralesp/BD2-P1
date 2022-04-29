@@ -213,10 +213,11 @@ void SequentialFile<Record>::reorganize()
 
     NextLabel printPtr;
     Record printRecord;
+    int marker = 1;
     fileData >> printPtr;
     while (printPtr.nextRow != -1)
     {
-        tempCopyWrite << printPtr;
+        tempCopyWrite <<NextLabel{marker++, 'd'};
         if (printPtr.nextRowFile == 'd')
             fileData >> printRecord >> printPtr;
         else
