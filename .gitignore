@@ -2,4 +2,4 @@
 *.dat
 bs.cpp
 main_f.cpp
-main.cpp
+testsSeq.cpp
