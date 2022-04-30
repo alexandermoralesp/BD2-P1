@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>insert_fifa</class>
+ <widget class="QWidget" name="insert_fifa">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>274</width>
+    <height>749</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QTextBrowser" name="titulo">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>10</y>
+     <width>271</width>
+     <height>731</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background: rgba(6,187,176,1)</string>
+   </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; font-weight:600;&quot;&gt;UTEC&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>70</y>
+     <width>257</width>
+     <height>660</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="8" column="0">
+     <widget class="QLabel" name="PAS">
+      <property name="text">
+       <string>PAS</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="PHY">
+      <property name="text">
+       <string>Phy</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="inp_awr">
+      <item>
+       <property name="text">
+        <string>Seleccionar opcion</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>High</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Medium</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Low</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>NA</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="OVR">
+      <property name="text">
+       <string>OVR</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QLineEdit" name="inp_pac">
+      <property name="placeholderText">
+       <string>0-97</string>
+      </property>
+     </widget>
+    </item>
+    <item row="18" column="0">
+     <widget class="QLabel" name="SPD">
+      <property name="text">
+       <string>Spd</string>
+      </property>
+     </widget>
+    </item>
+    <item row="17" column="0">
+     <widget class="QLabel" name="KIC">
+      <property name="text">
+       <string>Kic</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QLineEdit" name="inp_ovr">
+      <property name="placeholderText">
+       <string>47 - 98</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="Foot">
+      <property name="text">
+       <string>Foot</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="inp_foot">
+      <item>
+       <property name="text">
+        <string>seleccionar opcion</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>R</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>L</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="inp_position">
+      <item>
+       <property name="text">
+        <string>seleccionar opcion</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ST</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>CF</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>RW</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>CAM</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>LW</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>CM</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>LM</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>RM</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>CDM</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>RWB</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>LWB</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>CB</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>LB</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>RB</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>GK</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <widget class="QLineEdit" name="inp_dri">
+      <property name="placeholderText">
+       <string>0-97</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QLineEdit" name="inp_sho">
+      <property name="placeholderText">
+       <string>0-96</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="PAC">
+      <property name="text">
+       <string>PAC</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="1">
+     <widget class="QLineEdit" name="inp_def">
+      <property name="placeholderText">
+       <string>0-96</string>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="0">
+     <widget class="QLabel" name="SM">
+      <property name="text">
+       <string>SM</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="DWR">
+      <property name="text">
+       <string>DWR</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="SHO">
+      <property name="text">
+       <string>SHO</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="inp_id">
+      <property name="placeholderText">
+       <string>ej: Pele</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QLineEdit" name="inp_pas">
+      <property name="placeholderText">
+       <string>0-96</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="DRI">
+      <property name="text">
+       <string>Dri</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="AWR">
+      <property name="text">
+       <string>AWR</string>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QLabel" name="DIV">
+      <property name="text">
+       <string>Div</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="Id">
+      <property name="text">
+       <string>Id</string>
+      </property>
+     </widget>
+    </item>
+    <item row="15" column="0">
+     <widget class="QLabel" name="HAN">
+      <property name="text">
+       <string>Han</string>
+      </property>
+     </widget>
+    </item>
+    <item row="19" column="0" colspan="2">
+     <widget class="QPushButton" name="btn_insertar">
+      <property name="text">
+       <string>Insertar</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QComboBox" name="inp_dwr">
+      <item>
+       <property name="text">
+        <string>Seleccionar opcion</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>High</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Medium</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Low</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>NA</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="16" column="0">
+     <widget class="QLabel" name="REF">
+      <property name="text">
+       <string>Ref</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="Position">
+      <property name="text">
+       <string>Position</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="0">
+     <widget class="QLabel" name="POS">
+      <property name="text">
+       <string>Pos</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="DEF">
+      <property name="text">
+       <string>Def</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="1">
+     <widget class="QLineEdit" name="inp_phy">
+      <property name="placeholderText">
+       <string>0-92</string>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="1">
+     <widget class="QLineEdit" name="inp_dri_4">
+      <property name="placeholderText">
+       <string>0-5</string>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="1">
+     <widget class="QLineEdit" name="inp_dri_5">
+      <property name="placeholderText">
+       <string>60-70</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="1">
+     <widget class="QLineEdit" name="inp_pos">
+      <property name="placeholderText">
+       <string>60-70</string>
+      </property>
+     </widget>
+    </item>
+    <item row="15" column="1">
+     <widget class="QLineEdit" name="inp_han">
+      <property name="placeholderText">
+       <string>60-70</string>
+      </property>
+     </widget>
+    </item>
+    <item row="16" column="1">
+     <widget class="QLineEdit" name="inp_ref">
+      <property name="placeholderText">
+       <string>60-70</string>
+      </property>
+     </widget>
+    </item>
+    <item row="17" column="1">
+     <widget class="QLineEdit" name="inp_kic">
+      <property name="placeholderText">
+       <string>60-70</string>
+      </property>
+     </widget>
+    </item>
+    <item row="18" column="1">
+     <widget class="QLineEdit" name="inp_spd">
+      <property name="placeholderText">
+       <string>30-45</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
