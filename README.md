@@ -36,6 +36,8 @@ TODO: colocar el gif
 | Ugarte Quispe, Grover     | 202020195        | 100%            |
 | Gutierrez Guanilo, Luis   | 202010074        | 100%            |
 
+# Enlace del video: https://youtu.be/tahhnZTQRAI
+
 ## Introducción
 
 El presente proyecto tiene como objetivo el aprendizaje de los diferentes métodos de manejo de archivos e indexación en los sistemas de gestión de bases de datos por medio de su implementación en un lenguaje de programación de bajo nivel. Entre los medios de organización vistos se encuentran el archivo secuencial, ISAM, B+ tree y hash extensible. Para esta entrega del proyecto, se decidió realizar la implementación del archivo secuencial y hash extensible.
