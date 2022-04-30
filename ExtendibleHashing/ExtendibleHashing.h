@@ -118,19 +118,22 @@ private:
 template <typename KeyType, int FactorBlock, int depth>
 bool ExtendibleHashing<KeyType, FactorBlock, depth>::insert(KeyType key, long pos)
 {
+  int counter_access = 0;
   // TODO: Resolver problema de string keytype para la escritura
   // Get hash code
   std::string hash_code = get_hash_code(key);
-  std::cout << "Hash code: " << hash_code << std::endl;
+  // std::cout << "Hash code: " << hash_code << std::endl;
 
   // Get size of index file
   size_t size_index_file = get_size_of_file(index_filename);
   if (size_index_file == 0)
   {
     initialize_index_and_records_binary_files(index_filename, records_filename);
+    counter_access += 3;
     std::cout << "First Number of indexes: " << get_number_of_indexes(index_filename) << "\n";
     std::cout << "First Number of buckets: " << get_number_of_buckets(records_filename) << "\n";
   }
+  counter_access += 3;
 
   size_index_file = get_size_of_file(index_filename);
   size_t size_records_file = get_size_of_file(records_filename);
@@ -138,6 +141,7 @@ bool ExtendibleHashing<KeyType, FactorBlock, depth>::insert(KeyType key, long po
   current.readFromFile(0, index_filename);
   int i = 0;
   long current_position = 0;
+  // 100
   while (!current.isLeaf && i < depth)
   {
     if (hash_code[i] == '1')
@@ -152,7 +156,8 @@ bool ExtendibleHashing<KeyType, FactorBlock, depth>::insert(KeyType key, long po
     }
     i++;
   }
-
+  counter_access += depth;
+  
   // When current is leaf, the position of the bucket record is zero
   size_t bucket_position = current.zero;
   BucketRecord<KeyType, FactorBlock> bucket_record;
@@ -161,14 +166,6 @@ bool ExtendibleHashing<KeyType, FactorBlock, depth>::insert(KeyType key, long po
   // Number of records
   size_t number_of_indexes = size_index_file / current.get_size();
   size_t number_of_buckets = size_records_file / bucket_record.get_size();
-
-  for (size_t i = 0; i < bucket_record.size; i++)
-  {
-    if (bucket_record.keys[i] == key)
-    {
-      return false;
-    }
-  }
 
   if (bucket_record.size < FactorBlock)
   {
@@ -182,11 +179,13 @@ bool ExtendibleHashing<KeyType, FactorBlock, depth>::insert(KeyType key, long po
     {
       bucket_position = bucket_record.next;
       bucket_record.readFromFile(bucket_record.next, records_filename);
+          counter_access += 1;
     }
     if (bucket_record.size < FactorBlock)
     {
       bucket_record.insert(key, pos);
       bucket_record.writeToFile(bucket_position, records_filename);
+      counter_access += 1;
     }
     else
     {
@@ -195,6 +194,7 @@ bool ExtendibleHashing<KeyType, FactorBlock, depth>::insert(KeyType key, long po
       new_bucket_record.writeToFile(number_of_buckets, records_filename);
       bucket_record.next = number_of_buckets;
       bucket_record.writeToFile(bucket_position, records_filename);
+      counter_access += 2;
     }
   }
   else
@@ -234,7 +234,7 @@ bool ExtendibleHashing<KeyType, FactorBlock, depth>::insert(KeyType key, long po
     // Add new buckets to records file
     new_zero_record.writeToFile(bucket_position, records_filename);
     new_one_record.writeToFile(number_of_buckets, records_filename);
-
+    counter_access += 3;
     // Updated current index
     current.zero = number_of_indexes;
     current.one = number_of_indexes + 1;
@@ -248,9 +248,11 @@ bool ExtendibleHashing<KeyType, FactorBlock, depth>::insert(KeyType key, long po
     current.writeToFile(current_position, index_filename);
     zero_child.writeToFile(number_of_indexes, index_filename);
     one_child.writeToFile(number_of_indexes + 1, index_filename);
+    counter_access += 3;
   }
   // std::cout << "Number of indexes: " << get_number_of_indexes(index_filename) << "\n";
   // std::cout << "Number of buckets: " << get_number_of_buckets(records_filename) << "\n";
+  std::cout << counter_access << "\n";
   return true;
 }
 
@@ -332,12 +334,16 @@ Record<KeyType> ExtendibleHashing<KeyType, FactorBlock, depth>::search(KeyType k
 template <typename KeyType, int FactorBlock, int depth>
 bool ExtendibleHashing<KeyType, FactorBlock, depth>::remove(KeyType key)
 {
+  int counter_access = 0;
+  std::cout << "Access: "<< counter_access;
   size_t index_file = get_size_of_file(index_filename);
   if (!index_file)
     throw std::runtime_error("Index file is empty");
   std::string hash_code = get_hash_code(key);
   BucketIndex current;
   current.readFromFile(0, index_filename);
+  counter_access++;
+  
   int i = 0;
   long current_position = 0;
   while (!current.isLeaf && i < depth)
@@ -353,11 +359,17 @@ bool ExtendibleHashing<KeyType, FactorBlock, depth>::remove(KeyType key)
       current.readFromFile(current_position, index_filename);
     }
     i++;
+    counter_access++;
   }
   long record_position = current.zero;
   BucketRecord<KeyType, FactorBlock> bucket_record;
   bucket_record.readFromFile(record_position, records_filename);
-  if (bucket_record.size == 0) return true;
+  counter_access++;
+  if (bucket_record.size == 0) 
+  {
+    return true;
+    std::cout << "Remove: " << counter_access << "\n";
+  }
   do
   {
     for (int i = 0; i < bucket_record.size; i++)
@@ -366,6 +378,8 @@ bool ExtendibleHashing<KeyType, FactorBlock, depth>::remove(KeyType key)
       {
         bucket_record.remove(key);
         bucket_record.writeToFile(record_position, records_filename);
+        counter_access++;
+        std::cout << "Remove: " << counter_access << "\n";
         return true;
       }
     }
@@ -374,6 +388,7 @@ bool ExtendibleHashing<KeyType, FactorBlock, depth>::remove(KeyType key)
     record_position = bucket_record.next;
     bucket_record.readFromFile(record_position, records_filename);
   } while (record_position != -1);
+  std::cout << "Remove: " << counter_access << "\n";
   return false;
 }
 
