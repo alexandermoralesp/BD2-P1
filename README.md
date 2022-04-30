@@ -5,12 +5,12 @@
 - Morales Panitz, Alexander 
 - Ugarte Quispe, Grover
 - Gutierrez Luis
+
 | Lista de actividades realizadas                                                                                                                                                                | Responsable       | Nota |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|------|
 | Sequential File, testers del Sequential file, menu Sequential File, CSVReader para cereal.csv                                                                                                  | Grover Ugarte     |      |
 | Extendible Hashing, testers del Extendible Hashing, menu Extendible Hashing, CSV Reader para fifa.csv                                                                                          | Alexander Morales |      |
 | GUI de inicio a fin, diseño de la GUI, base de datos mysql para almacenar la informacion y consultas,  parser para las peticios, manejo de la API de cada tecnica de organizaci´ón de archivos | Luis Gutierrez    |      |
-
 
 | Apellidos y Nombres       | Código de alumno | % Participación |
 |---------------------------|------------------|-----------------|
