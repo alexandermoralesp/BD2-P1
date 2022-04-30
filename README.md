@@ -313,3 +313,4 @@ Para realizar pruebas de uso en nuestra aplicación creada, emplearemos un ensay
 	7. Eliminación de la llave: ```Johan Cryuff```
 	8. Búsqueda en rango desde la llave: ```Javier Zanetti``` hasta ```Joshua Kimmich```
 
+- Ya que estos pasos se realizan por cada organización de archivos, la aplicación se pondrá a prueba por **4 veces.**
