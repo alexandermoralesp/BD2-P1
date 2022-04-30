@@ -1,4 +1,22 @@
-# Proyecto 1
+<h1 align="center">
+  <br>
+  <br>
+  Proyecto 1 de Base de Datos 2
+  <br>
+</h1>
+<p align="center">
+  <img src="https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white">
+  <img src="https://img.shields.io/badge/CLion-black?style=for-the-badge&logo=clion&logoColor=white">
+  <img src="https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white">
+  <img src="https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white">
+  <img src="https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white">
+</p>
+<!-- 
+TODO: colocar el gif
+<h1 align="center">
+  <a href="#"><img src="./assets/capture.gif" alt="" width="70%"></a>
+</h1> -->
+
 
 ## Integrantes
 
