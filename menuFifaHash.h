@@ -7,30 +7,24 @@
 bool insert(std::string line, long pos) {
     Registros::CartaFifa fifa;
     fifa.readCSVLine(line);
-    ExtendibleHashing<size_t,3,3> eh("./ExtendibleHashing/fifa");
-    std::hash<std::string> hash_fifa;
-    size_t pre_hash = hash_fifa(fifa.id);
-    return eh.insert(pre_hash, pos);
+    ExtendibleHashing<std::string, 3, 3> eh("./ExtendibleHashing/fifa"); 
+    return eh.insert(fifa.id, pos);
 }
 
 void read_all_indexes() {
-    ExtendibleHashing<size_t,3,3> eh("./ExtendibleHashing/fifa");
+    ExtendibleHashing<std::string, 3, 3> eh("./ExtendibleHashing/fifa"); 
     eh.readAllIndexes();
 }
 
 bool remove(std::string line) {
-    std::hash<std::string> hash_fifa;
-    ExtendibleHashing<size_t,3,3> eh("./ExtendibleHashing/fifa");
-    size_t pre_hash = hash_fifa(line);
-    return eh.remove(pre_hash);
+    ExtendibleHashing<std::string, 3, 3> eh("./ExtendibleHashing/fifa"); 
+    return eh.remove(line);
 }
 
 std::string search(std::string line) {
     Registros::CartaFifa fifa;;
-    ExtendibleHashing<size_t,3,3> eh("./ExtendibleHashing/fifa");
-    std::hash<std::string> hash_fifa;
-    size_t pre_hash = hash_fifa(line);
-    Record<size_t> output = eh.search(pre_hash);
+    ExtendibleHashing<std::string, 3, 3> eh("./ExtendibleHashing/fifa"); 
+    Record<std::string> output = eh.search(line);
     std::ifstream fin("./ExtendibleHashing/fifa.dat", std::ios::binary);
     if (!fin.is_open()) std::cout << "No se pudo abrir fifa.dat";
     fin.seekg(output.pos, std::ios::beg);
