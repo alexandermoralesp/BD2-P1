@@ -12,7 +12,6 @@ bool buildFifa() {
     generate_fifa_dat();
     isBuilded = 1;
 }
-std::hash<std::string> hash_fn_str;
 
 bool insert(std::string record, lons pos); // Like line in csv
 std::string search(std::string id); // Like id in csv
@@ -22,23 +21,20 @@ bool insert(std::string record, long pos) {
     if (!isBuilded) buildFifa();
     Registros::CartaFifa fifa;
     fifa.readCSVLine(record);
-    ExtendibleHashing<size_t, 3, 3> eh("fifa");
-    size_t value = hash_fn_str(fifa.id);    
-    return eh.insert(value, pos);
+    ExtendibleHashing<std::string, 3, 3> eh("fifa");    
+    return eh.insert(fifa.id, pos);
 } // Like line in csv
 std::string search(std::string id) {
     if (!isBuilded) buildFifa();
-    ExtendibleHashing<size_t, 3, 3> eh("fifa");
-    size_t key = hash_fn_str(id);
-    Record <size_t> record = eh.search(key);
+    ExtendibleHashing<std::string, 3, 3> eh("fifa"); 
+    Record <size_t> record = eh.search(id);
     return readAt(record.pos);
 } // Like id in csv
 
 bool remove(std::string id) {
     if (!isBuilded) throw(runtime_error("Fifa not builded"));
-    ExtendibleHashing<int, 3, 3> eh("fifa");
-    size_t key = hash_fn_str(id);
-    return eh.remove(key);
+    ExtendibleHashing<std::string, 3, 3> eh("fifa"); 
+    return eh.remove(id);
 }
 
 #endif
