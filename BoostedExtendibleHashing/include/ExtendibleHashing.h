@@ -215,6 +215,62 @@ Record<T> ExtendibleHashing<T>::search(T key) {
   } while (bucket_leaf.next_ != 0);
 
 }
+
+template <typename T>
+void ExtendibleHashing<T>::remove(T key) {
+  // Get hash code
+  size_t hash_number = hash_function(key) % (1 << depth);
+  std::string hash_code = std::bitset<depth>(hash_number).to_string();
+
+  // Get size of not leaf bucket file
+  size_t size_index_notleaf_file =
+      get_size_of_file(this->bucketnotleaf_filename);
+  if (size_index_notleaf_file == 0) {
+    // Create new bucket leaf and not leaf
+    throw std::runtime_error("File not found at " +
+                            this->bucketnotleaf_filename + "in search");
+  }
+
+  // Update sizes
+  size_index_notleaf_file = get_size_of_file(this->bucketnotleaf_filename);
+  size_t size_index_leaf_file = get_size_of_file(this->bucketleaf_filename);
+
+  // Temporal Bucket Not Leaf
+  BucketNotLeaf current;
+  current.read_from_file(this->bucketnotleaf_filename, 0);
+
+  // Iterate through the buckets not leaf
+  int i = 0;
+  long current_pos = 0;
+  while (!current.isLeaf && i < depth) {
+    if (current.bit == hash_code[i]) {
+      current_pos = current.one;
+      current.read_from_file(this->bucketnotleaf_filename, current.one);
+    } else {
+      current_pos = current.zero;
+      current.read_from_file(this->bucketnotleaf_filename, current.zero);
+    }
+    i++;
+  }
+
+  // When current is leaf, the position of the bucket record is zero
+  size_t bucket_position = current.zero;
+
+  BucketLeaf<T> bucket_leaf;
+  bucket_leaf.read_from_file(this->bucketleaf_filename, bucket_position);
+
+  if (bucket_leaf.next_ == 0) {
+    throw std::runtime_error("Key not found at  " + this->bucketleaf_filename +
+                             " in search" + " key: " + std::to_string(key));
+  }
+  do {
+    if (bucket_leaf.elements_->find(key) != bucket_leaf.elements_->end()) {
+      return bucket_leaf.remove_element(key);
+    }
+    bucket_position = bucket_leaf.next_;
+    bucket_leaf.read_from_file(this->bucketleaf_filename, bucket_position);
+  } while (bucket_leaf.next_ != 0);
+}
 /* Auxiliar functions */
 
 template <typename T>
