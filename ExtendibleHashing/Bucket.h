@@ -67,7 +67,6 @@ struct BucketRecord
     {
       return sizeof(int) + sizeof(long) + (MAX_SIZE_CHARACTERS + sizeof(long)) * FactorBlock;
     }
-    return size * MAX_SIZE_CHARACTERS;
     return sizeof(int) + sizeof(long) + sizeof(KeyType) * FactorBlock + sizeof(long) * FactorBlock;
   }
   void readFromFile(long pos, std::string filename)
