@@ -27,7 +27,7 @@ TODO: colocar el gif
 | Lista de actividades realizadas                                                                                                                                                                | Responsable       | Nota |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|------|
 | Sequential File, testers del Sequential file, menu Sequential File, CSVReader para cereal.csv                                                                                                  | Grover Ugarte     |      |
-| Extendible Hashing, testers del Extendible Hashing, menu Extendible Hashing, CSV Reader para fifa.csv                                                                                          | Alexander Morales |      |
+| Extendible Hashing, Boosted Extendible Hashing,  testers del Extendible Hashing, menu Extendible Hashing, CSV Reader para fifa.csv                                                                                          | Alexander Morales |      |
 | GUI de inicio a fin, diseño de la GUI,  parser para las peticios, manejo de la API de cada tecnica de organizaci´ón de archivos | Luis Gutierrez    |      |
 
 | Apellidos y Nombres       | Código de alumno | % Participación |
@@ -37,6 +37,9 @@ TODO: colocar el gif
 | Gutierrez Guanilo, Luis   | 202010074        | 100%            |
 
 # Enlace del video: https://youtu.be/tahhnZTQRAI
+
+- Revisar código BoostedExtendible y README: https://github.com/alexanderutec/BD2-P1/tree/main/BoostedExtendibleHashing 
+- Se tuvo problemas de visualización en la GUI con el Extendible Hashing. Los tests pasaban correctamente en Windows pero en Linux no reconocía las salidas el Qt.
 
 ## Introducción
 
